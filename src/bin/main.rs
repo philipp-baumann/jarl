@@ -20,7 +20,7 @@ fn main() {
             let mut contents = String::new();
             buf_reader.read_to_string(&mut contents).unwrap();
             let ast = parser.parse_input(&contents);
-            let line_col = parser.parse_line_col(&contents);
+            // let line_col = parser.parse_line_col(&contents);
             check_ast(ast.unwrap())
         })
         .flatten()
