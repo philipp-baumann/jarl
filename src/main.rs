@@ -19,7 +19,7 @@ fn main() {
             let parsed = air_r_parser::parse(contents.as_str(), parser_options);
             let out = &parsed.syntax::<RLanguage>();
             let loc_new_lines = find_new_lines(out);
-            check_ast(out, loc_new_lines, file)
+            check_ast(out, &loc_new_lines, file)
         })
         .flatten()
         .collect();
@@ -31,16 +31,15 @@ fn main() {
     println!("Checked files in: {:?}", duration);
 }
 
-fn check_ast(ast: &RSyntaxNode, loc_new_lines: Vec<usize>, file: &str) -> Vec<Message> {
+fn check_ast(ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<Message> {
     let mut messages: Vec<Message> = vec![];
     // println!("{:?}", ast.text());
     // println!("{:?}", ast.kind());
     match ast.kind() {
         RSyntaxKind::R_EXPRESSION_LIST => {
-            let _ = ast
-                .children()
-                .map(|child| messages.extend(check_ast(&child, loc_new_lines.clone(), file)))
-                .collect::<Vec<_>>();
+            for child in ast.children() {
+                messages.extend(check_ast(&child, &loc_new_lines, file))
+            }
         }
         RSyntaxKind::R_CALL => {
             let call = ast.first_child().unwrap().text_trimmed();
