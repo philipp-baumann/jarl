@@ -7,6 +7,8 @@ pub trait LintChecker {
 }
 
 pub struct AnyIsNa;
+pub struct AnyDuplicated;
+pub struct TrueFalseSymbol;
 
 impl LintChecker for AnyIsNa {
     fn check(&self, ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<Message> {
@@ -33,7 +35,30 @@ impl LintChecker for AnyIsNa {
     }
 }
 
-pub struct TrueFalseSymbol;
+impl LintChecker for AnyDuplicated {
+    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<Message> {
+        let mut messages = vec![];
+        if ast.kind() == RSyntaxKind::R_CALL {
+            let call = ast.first_child().unwrap().text_trimmed();
+            if call == "any" {
+                let args = get_args(ast);
+                if let Some(x) = args {
+                    let first_arg = x.first_child().unwrap().first_child().unwrap();
+                    if first_arg.text_trimmed() == "duplicated"
+                        && first_arg.kind() == RSyntaxKind::R_IDENTIFIER
+                    {
+                        let (row, column) = find_row_col(ast, loc_new_lines);
+                        messages.push(Message::AnyDuplicated {
+                            filename: file.into(),
+                            location: Location { row, column },
+                        });
+                    }
+                }
+            }
+        }
+        messages
+    }
+}
 
 impl LintChecker for TrueFalseSymbol {
     fn check(&self, ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<Message> {

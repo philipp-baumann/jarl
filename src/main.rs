@@ -37,10 +37,13 @@ fn main() {
 fn check_ast(ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<Message> {
     let mut messages: Vec<Message> = vec![];
 
+    println!("{:?}", ast);
+    println!("{:?}", ast.text());
+
     let linters: Vec<Box<dyn LintChecker>> = vec![
         Box::new(AnyIsNa),
         Box::new(TrueFalseSymbol),
-        // Add more lints here as needed
+        Box::new(AnyDuplicated),
     ];
 
     for linter in linters {
@@ -48,7 +51,9 @@ fn check_ast(ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<M
     }
 
     match ast.kind() {
-        RSyntaxKind::R_EXPRESSION_LIST => {
+        RSyntaxKind::R_EXPRESSION_LIST
+        | RSyntaxKind::R_FUNCTION_DEFINITION
+        | RSyntaxKind::R_FOR_STATEMENT => {
             for child in ast.children() {
                 messages.extend(check_ast(&child, loc_new_lines, file));
             }
@@ -56,7 +61,9 @@ fn check_ast(ast: &RSyntaxNode, loc_new_lines: &Vec<usize>, file: &str) -> Vec<M
         RSyntaxKind::R_CALL_ARGUMENTS
         | RSyntaxKind::R_ARGUMENT_LIST
         | RSyntaxKind::R_ARGUMENT
-        | RSyntaxKind::R_ROOT => {
+        | RSyntaxKind::R_ROOT
+        | RSyntaxKind::R_WHILE_STATEMENT
+        | RSyntaxKind::R_IF_STATEMENT => {
             if let Some(x) = &ast.first_child() {
                 messages.extend(check_ast(x, loc_new_lines, file))
             }
