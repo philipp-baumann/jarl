@@ -18,15 +18,18 @@ impl LintChecker for AnyIsNa {
             if call == "any" {
                 let args = get_args(ast);
                 if let Some(x) = args {
-                    let first_arg = x.first_child().unwrap().first_child().unwrap();
-                    if first_arg.text_trimmed() == "is.na"
-                        && first_arg.kind() == RSyntaxKind::R_IDENTIFIER
-                    {
-                        let (row, column) = find_row_col(ast, loc_new_lines);
-                        messages.push(Message::AnyIsNa {
-                            filename: file.into(),
-                            location: Location { row, column },
-                        });
+                    if let Some(y) = x.first_child() {
+                        if let Some(first_arg) = y.first_child() {
+                            if first_arg.text_trimmed() == "is.na"
+                                && first_arg.kind() == RSyntaxKind::R_IDENTIFIER
+                            {
+                                let (row, column) = find_row_col(ast, loc_new_lines);
+                                messages.push(Message::AnyIsNa {
+                                    filename: file.into(),
+                                    location: Location { row, column },
+                                });
+                            }
+                        }
                     }
                 }
             }
@@ -43,15 +46,18 @@ impl LintChecker for AnyDuplicated {
             if call == "any" {
                 let args = get_args(ast);
                 if let Some(x) = args {
-                    let first_arg = x.first_child().unwrap().first_child().unwrap();
-                    if first_arg.text_trimmed() == "duplicated"
-                        && first_arg.kind() == RSyntaxKind::R_IDENTIFIER
-                    {
-                        let (row, column) = find_row_col(ast, loc_new_lines);
-                        messages.push(Message::AnyDuplicated {
-                            filename: file.into(),
-                            location: Location { row, column },
-                        });
+                    if let Some(y) = x.first_child() {
+                        if let Some(first_arg) = y.first_child() {
+                            if first_arg.text_trimmed() == "duplicated"
+                                && first_arg.kind() == RSyntaxKind::R_IDENTIFIER
+                            {
+                                let (row, column) = find_row_col(ast, loc_new_lines);
+                                messages.push(Message::AnyDuplicated {
+                                    filename: file.into(),
+                                    location: Location { row, column },
+                                });
+                            }
+                        }
                     }
                 }
             }

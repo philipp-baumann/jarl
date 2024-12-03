@@ -27,7 +27,6 @@ pub enum Message {
 }
 
 impl Message {
-    /// Short ID for the message.
     pub fn code(&self) -> &'static str {
         match self {
             Message::TrueFalseSymbol { .. } => "T-F-symbols",
@@ -35,8 +34,6 @@ impl Message {
             Message::AnyDuplicated { .. } => "any-duplicated",
         }
     }
-
-    /// The body text for the message.
     pub fn body(&self) -> &'static str {
         match self {
             Message::TrueFalseSymbol { .. } => "`T` and `F` can be confused with variable names. Spell `TRUE` and `FALSE` entirely instead.",
