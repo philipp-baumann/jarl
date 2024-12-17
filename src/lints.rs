@@ -4,7 +4,7 @@ use crate::utils::{find_row_col, get_args};
 use air_r_syntax::{RSyntaxKind, RSyntaxNode};
 
 pub trait LintChecker {
-    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[u32], file: &str) -> Vec<Message>;
+    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[usize], file: &str) -> Vec<Message>;
 }
 
 pub struct AnyIsNa;
@@ -12,7 +12,7 @@ pub struct AnyDuplicated;
 pub struct TrueFalseSymbol;
 
 impl LintChecker for AnyIsNa {
-    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[u32], file: &str) -> Vec<Message> {
+    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[usize], file: &str) -> Vec<Message> {
         let mut messages = vec![];
         if ast.kind() != RSyntaxKind::R_CALL {
             return messages;
@@ -48,7 +48,7 @@ impl LintChecker for AnyIsNa {
 }
 
 impl LintChecker for AnyDuplicated {
-    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[u32], file: &str) -> Vec<Message> {
+    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[usize], file: &str) -> Vec<Message> {
         let mut messages = vec![];
         if ast.kind() != RSyntaxKind::R_CALL {
             return messages;
@@ -84,7 +84,7 @@ impl LintChecker for AnyDuplicated {
 }
 
 impl LintChecker for TrueFalseSymbol {
-    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[u32], file: &str) -> Vec<Message> {
+    fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[usize], file: &str) -> Vec<Message> {
         let mut messages = vec![];
         if ast.kind() == RSyntaxKind::R_IDENTIFIER
             && (ast.text_trimmed() == "T" || ast.text_trimmed() == "F")

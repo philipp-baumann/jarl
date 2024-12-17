@@ -1,6 +1,6 @@
 use crate::message::*;
 
-pub fn apply_fixes(fixes: &Vec<Message>, contents: &str) -> String {
+pub fn apply_fixes(fixes: &[Message], contents: &str) -> String {
     let fixes = fixes
         .iter()
         .map(|msg| match msg {

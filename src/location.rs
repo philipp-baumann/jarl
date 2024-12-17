@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 /// Sourcecode location.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Location {
-    pub(super) row: u32,
-    pub(super) column: u32,
+    pub(super) row: usize,
+    pub(super) column: usize,
 }
 
 impl Location {
@@ -26,19 +26,17 @@ impl Location {
     /// let loc = Location::new(10, 10);
     /// ```
     pub fn new(row: usize, column: usize) -> Self {
-        let row = row.try_into().expect("Location::row over u32");
-        let column = column.try_into().expect("Location::column over u32");
         Location { row, column }
     }
 
     /// Current row
     pub fn row(&self) -> usize {
-        self.row as usize
+        self.row
     }
 
     /// Current column
     pub fn column(&self) -> usize {
-        self.column as usize
+        self.column
     }
 
     pub fn reset(&mut self) {
