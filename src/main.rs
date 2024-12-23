@@ -6,6 +6,7 @@ use flint::message::*;
 use flint::utils::*;
 use walkdir::WalkDir;
 
+use anyhow::Error;
 use clap::{arg, Parser};
 use rayon::prelude::*;
 use std::fs;
@@ -26,33 +27,37 @@ fn main() {
     let start = Instant::now();
     let args = Args::parse();
 
-    // let r_files = WalkDir::new(args.dir)
-    //     .into_iter()
-    //     .filter_map(Result::ok)
-    //     .filter(|e| e.file_type().is_file())
-    //     .filter(|e| {
-    //         e.path().extension() == Some(std::ffi::OsStr::new("R"))
-    //             || e.path().extension() == Some(std::ffi::OsStr::new("r"))
-    //     })
-    //     .map(|e| e.path().to_path_buf())
-    //     .collect::<Vec<_>>();
+    let r_files = WalkDir::new(args.dir)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|e| e.file_type().is_file())
+        .filter(|e| {
+            e.path().extension() == Some(std::ffi::OsStr::new("R"))
+                || e.path().extension() == Some(std::ffi::OsStr::new("r"))
+        })
+        .map(|e| e.path().to_path_buf())
+        .collect::<Vec<_>>();
 
-    let r_files = vec![Path::new("demo/foo.R")];
+    // let r_files = vec![Path::new("demo/foo.R")];
 
     let parser_options = RParserOptions::default();
     let messages: Vec<Message> = r_files
         .par_iter()
-        .map(|file| {
-            let contents = fs::read_to_string(Path::new(file)).expect("couldn't read file");
+        // TODO: this only ignores files where there was an error, it doesn't
+        // return the error messages
+        .filter_map(|file| {
+            let contents = fs::read_to_string(Path::new(file)).ok()?;
             let parsed = air_r_parser::parse(contents.as_str(), parser_options);
             let syntax = &parsed.syntax();
-            let loc_new_lines = find_new_lines(syntax);
+            let loc_new_lines = find_new_lines(syntax).ok()?;
             let checks = check_ast(syntax, &loc_new_lines, file.to_str().unwrap());
+
             if args.fix {
                 let out = apply_fixes(&checks, &contents);
                 let _ = fs::write(file, out);
             }
-            checks
+
+            Some(checks)
         })
         .flatten()
         .collect();
@@ -80,7 +85,7 @@ mod tests {
         let contents = fs::read_to_string(Path::new(&temppath)).expect("couldn't read file");
         let parsed = air_r_parser::parse(contents.as_str(), parser_options);
         let out = &parsed.syntax();
-        let loc_new_lines = find_new_lines(out);
+        let loc_new_lines = find_new_lines(out)?;
         let checks = check_ast(out, &loc_new_lines, temppath.to_str().unwrap());
         Ok(checks)
     }

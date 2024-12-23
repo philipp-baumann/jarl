@@ -1,14 +1,15 @@
 use air_r_syntax::{RSyntaxKind, RSyntaxNode};
+use anyhow::{anyhow, Result};
 
-pub fn find_new_lines(ast: &RSyntaxNode) -> Vec<usize> {
+pub fn find_new_lines(ast: &RSyntaxNode) -> Result<Vec<usize>> {
     match ast.first_child() {
-        Some(rootnode) => rootnode
+        Some(rootnode) => Ok(rootnode
             .text()
             .to_string()
             .match_indices("\n")
             .map(|x| x.0)
-            .collect::<Vec<usize>>(),
-        None => unreachable!("Rootnode must have a child"),
+            .collect::<Vec<usize>>()),
+        None => Err(anyhow!("Couldn't find root node")),
     }
 }
 
