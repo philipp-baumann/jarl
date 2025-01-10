@@ -13,11 +13,26 @@ use walkdir::WalkDir;
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
+#[command(
+    author,
+    name = "flint",
+    about = "Flint: Find and Fix Lints in R Code",
+    after_help = "For help with a specific command, see: `flint help <command>`."
+)]
 struct Args {
-    #[arg(short, long, default_value = ".")]
+    #[arg(
+        short,
+        long,
+        default_value = ".",
+        help = "The directory in which to check or fix lints."
+    )]
     dir: String,
-    #[arg(short, long, default_value = "false")]
+    #[arg(
+        short,
+        long,
+        default_value = "false",
+        help = "Automatically fix issues detected by the linter."
+    )]
     fix: bool,
 }
 
