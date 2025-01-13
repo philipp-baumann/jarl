@@ -166,7 +166,7 @@ impl LintChecker for EqualsNa {
             return messages;
         };
 
-        let na_values = vec![
+        let na_values = [
             "NA",
             "NA_character_",
             "NA_integer_",

@@ -17,7 +17,7 @@ pub fn apply_fixes(fixes: &[Message], contents: &str) -> (bool, String) {
     let mut has_skipped_fixes = false;
 
     let old_length = old_content.chars().count() as i32;
-    let mut new_length = old_length as i32;
+    let mut new_length = old_length;
 
     for fix in fixes {
         let mut start: i32 = fix.start.try_into().unwrap();

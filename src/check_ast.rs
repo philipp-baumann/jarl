@@ -6,14 +6,14 @@ use crate::lints::*;
 use crate::message::*;
 use crate::utils::*;
 use anyhow::Result;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub fn get_checks(
-    contents: &String,
-    file: &PathBuf,
+    contents: &str,
+    file: &Path,
     parser_options: RParserOptions,
 ) -> Result<Vec<Message>> {
-    let parsed = air_r_parser::parse(contents.as_str(), parser_options);
+    let parsed = air_r_parser::parse(contents, parser_options);
     let syntax = &parsed.syntax();
     let loc_new_lines = find_new_lines(syntax)?;
     Ok(check_ast(syntax, &loc_new_lines, file.to_str().unwrap()))
