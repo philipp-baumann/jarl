@@ -1,7 +1,7 @@
 use crate::location::Location;
 use crate::message::*;
 use crate::trait_lint_checker::LintChecker;
-use crate::utils::{find_row_col, get_args};
+use crate::utils::{find_row_col, get_args, node_is_in_square_brackets};
 use air_r_syntax::RSyntaxNode;
 use air_r_syntax::*;
 use biome_rowan::AstNode;
@@ -16,10 +16,9 @@ impl LintChecker for ClassEquals {
             return messages;
         }
 
-        println!(
-            "PARENT: {:?}",
-            ast.ancestors().map(|x| x.kind()).collect::<Vec<_>>()
-        );
+        if node_is_in_square_brackets(ast) {
+            return messages;
+        }
 
         let RBinaryExpressionFields { left: _, operator, right: _ } = bin_expr.unwrap().as_fields();
 

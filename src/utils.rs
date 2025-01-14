@@ -33,3 +33,11 @@ pub fn get_args(node: &RSyntaxNode) -> Option<RSyntaxNode> {
     node.descendants()
         .find(|x| x.kind() == RSyntaxKind::R_ARGUMENT)
 }
+
+pub fn node_is_in_square_brackets(ast: &RSyntaxNode) -> bool {
+    let great_grandparent = ast.ancestors().nth(3);
+    match great_grandparent {
+        Some(x) => x.kind() == RSyntaxKind::R_SUBSET_ARGUMENTS,
+        None => false,
+    }
+}
