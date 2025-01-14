@@ -2,6 +2,8 @@ use crate::location::Location;
 use crate::message::*;
 use crate::utils::{find_row_col, get_args};
 use air_r_syntax::*;
+use air_r_syntax::{map_syntax_node, RSyntaxNode};
+use biome_rowan::AstNode;
 
 pub trait LintChecker {
     fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[usize], file: &str) -> Vec<Message>;
@@ -150,13 +152,12 @@ impl LintChecker for ClassEquals {
 impl LintChecker for EqualsNa {
     fn check(&self, ast: &RSyntaxNode, loc_new_lines: &[usize], file: &str) -> Vec<Message> {
         let mut messages = vec![];
-
-        if ast.kind() != RSyntaxKind::R_BINARY_EXPRESSION {
+        let bin_expr = RBinaryExpression::cast(ast.clone());
+        if bin_expr.is_none() {
             return messages;
         }
 
-        let RBinaryExpressionFields { left, operator, right } =
-            unsafe { RBinaryExpression::new_unchecked(ast.clone()).as_fields() };
+        let RBinaryExpressionFields { left, operator, right } = bin_expr.unwrap().as_fields();
 
         let left = left.unwrap();
         let operator = operator.unwrap();

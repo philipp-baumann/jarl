@@ -34,6 +34,9 @@ clap = { version = "4.5.21", features = ["derive"] }
 walkdir = "2.5.0"
 anyhow = "1.0.94"
 tempfile = "3.14.0"
+# MUST BE SAME AS IN `air`
+biome_rowan = { git = "https://github.com/biomejs/biome", rev = "2648fa4201be4afd26f44eca1a4e77aac0a67272" }
+
 
 [dev-dependencies]
 insta = { version = "1.42.0", features = ["yaml"] }
