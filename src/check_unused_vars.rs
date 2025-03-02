@@ -26,7 +26,7 @@ pub fn check_unused_variables(model: &SemanticModel) -> Vec<Message> {
 
             if binding_was_written_here && !binding_was_read_here {
                 // println!("UNUSED BINDING: {:?}", binding.0);
-                messages.push(Message::UnusedVars {
+                messages.push(Message::UnusedObjs {
                     // filename: file.into(),
                     // location: Location { row, column },
                     varname: binding.0.to_string(),

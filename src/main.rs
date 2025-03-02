@@ -12,6 +12,7 @@ use rayon::prelude::*;
 use std::fs;
 use std::path::Path;
 // use std::time::Instant;
+use colored::Colorize;
 use walkdir::WalkDir;
 
 /// Simple program to greet a person
@@ -58,7 +59,7 @@ fn main() {
     // let r_files = vec![Path::new("demo/foo.R").to_path_buf()];
 
     let parser_options = RParserOptions::default();
-    let messages: Vec<Message> = r_files
+    let _: Vec<Message> = r_files
         .par_iter()
         // TODO: this only ignores files where there was an error, it doesn't
         // return the error messages
@@ -76,16 +77,18 @@ fn main() {
                 has_skipped_fixes = new_has_skipped_fixes;
                 let _ = fs::write(file, fixed_text);
             }
+            // Some(checks)
+
+            if !args.fix && &checks.len() > &0usize {
+                println!("{}", file.to_str().unwrap().blue().bold());
+                for message in &checks {
+                    println!("{}", message);
+                }
+            }
             Some(checks)
         })
         .flatten()
         .collect();
-
-    if !args.fix {
-        for message in messages {
-            println!("{}", message);
-        }
-    }
     // let duration = start.elapsed();
     // println!("Checked files in: {:?}", duration);
 }
