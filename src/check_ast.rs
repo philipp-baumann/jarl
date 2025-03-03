@@ -23,7 +23,8 @@ pub fn get_checks(
 
     let root = &parsed.tree();
     let semantic = semantic_model(root, SemanticModelOptions::default());
-    let mut messages_semantic: Vec<Message> = check_unused_variables(&semantic);
+    let mut messages_semantic: Vec<Message> = vec![];
+    // let mut messages_semantic: Vec<Message> = check_unused_variables(&semantic);
 
     let syntax = &parsed.syntax();
     let loc_new_lines = find_new_lines(syntax)?;

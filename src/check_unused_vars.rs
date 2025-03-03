@@ -6,6 +6,8 @@ pub fn check_unused_variables(model: &SemanticModel) -> Vec<Message> {
     let mut messages = vec![];
 
     for scope in scopes.iter() {
+        // println!("scope: {:#?}", scope);
+
         let bindings = &scope.bindings_by_name;
 
         let bindings_read_in_scope = &scope
@@ -27,6 +29,15 @@ pub fn check_unused_variables(model: &SemanticModel) -> Vec<Message> {
             if binding_was_written_here && !binding_was_read_here {
                 // println!("UNUSED BINDING: {:?}", binding.0);
                 messages.push(Message::UnusedObjs {
+                    // filename: file.into(),
+                    // location: Location { row, column },
+                    varname: binding.0.to_string(),
+                })
+            }
+
+            if !binding_was_written_here && binding_was_read_here {
+                // println!("UNUSED BINDING: {:?}", binding.0);
+                messages.push(Message::UndefinedObjs {
                     // filename: file.into(),
                     // location: Location { row, column },
                     varname: binding.0.to_string(),

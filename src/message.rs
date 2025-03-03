@@ -42,6 +42,9 @@ pub enum Message {
     UnusedObjs {
         varname: String,
     },
+    UndefinedObjs {
+        varname: String,
+    },
 }
 
 impl Message {
@@ -53,6 +56,7 @@ impl Message {
             Message::ClassEquals { .. } => "class-equals",
             Message::EqualsNa { .. } => "equals-na",
             Message::UnusedObjs { .. } => "unused-object",
+            Message::UndefinedObjs { .. } => "undefined-object",
         }
     }
     pub fn body(&self) -> String {
@@ -62,7 +66,8 @@ impl Message {
             Message::AnyDuplicated { .. } => "`any(duplicated(...))` is inefficient. Use `anyDuplicated(...) > 0` instead.".to_string(),
             Message::ClassEquals { .. } => "Use `inherits(x, 'class')` instead of comparing `class(x)` with `==` or `%in%`.".to_string(),
             Message::EqualsNa { .. } => "Use `is.na()` instead of comparing to NA with ==, != or %in%.".to_string(),
-            Message::UnusedObjs { varname } => format!("Unused object: \'{}\'", varname)
+            Message::UnusedObjs { varname } => format!("Unused object: \'{}\'", varname),
+            Message::UndefinedObjs { varname } => format!("Undefined object: \'{}\'", varname)
         }
     }
 }
@@ -84,6 +89,7 @@ impl fmt::Display for Message {
                 self.body()
             ),
             Message::UnusedObjs { .. } => write!(f, "{} {}", self.code().red(), self.body()),
+            Message::UndefinedObjs { .. } => write!(f, "{} {}", self.code().red(), self.body()),
         }
     }
 }

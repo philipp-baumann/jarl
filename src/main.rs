@@ -77,7 +77,6 @@ fn main() {
                 has_skipped_fixes = new_has_skipped_fixes;
                 let _ = fs::write(file, fixed_text);
             }
-            // Some(checks)
 
             if !args.fix && &checks.len() > &0usize {
                 println!("{}", file.to_str().unwrap().blue().bold());
