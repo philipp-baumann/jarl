@@ -15,7 +15,7 @@ pub fn find_new_lines(ast: &RSyntaxNode) -> Result<Vec<usize>> {
 }
 
 pub fn find_row_col(ast: &RSyntaxNode, loc_new_lines: &[usize]) -> (usize, usize) {
-    let start: usize = ast.text_range().start().into();
+    let start: usize = ast.text_trimmed_range().start().into();
     let new_lines_before = loc_new_lines
         .iter()
         .filter(|x| *x <= &start)
@@ -25,7 +25,8 @@ pub fn find_row_col(ast: &RSyntaxNode, loc_new_lines: &[usize]) -> (usize, usize
         Some(x) => **x,
         None => 0_usize,
     };
-    let col: usize = start - last_new_line + 1;
+
+    let col: usize = start - last_new_line;
     let row: usize = n_new_lines + 1;
     (row, col)
 }
