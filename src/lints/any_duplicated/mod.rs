@@ -5,6 +5,14 @@ mod tests {
     use crate::utils_test::*;
 
     #[test]
+    fn test_no_lint_any_duplicated() {
+        assert!(no_lint("y <- any(x)", "any_duplicated",));
+        assert!(no_lint("y <- duplicated(x)", "any_duplicated",));
+        assert!(no_lint("y <- any(!duplicated(x))", "any_duplicated",));
+        assert!(no_lint("y <- any(!duplicated(foo(x)))", "any_duplicated",))
+    }
+
+    #[test]
     fn test_lint_any_duplicated() {
         use insta::assert_snapshot;
 
@@ -24,6 +32,16 @@ mod tests {
             expected_message,
             "any_duplicated"
         ));
+        assert!(expect_lint(
+            "any(na.rm = TRUE, duplicated(x))",
+            expected_message,
+            "any_duplicated"
+        ));
+        assert!(expect_lint(
+            "any(duplicated(x)); 1 + 1; any(duplicated(y))",
+            expected_message,
+            "any_duplicated"
+        ));
         assert_snapshot!(
             "fix_output",
             get_fixed_text(
@@ -35,13 +53,5 @@ mod tests {
                 "any_duplicated",
             )
         );
-    }
-
-    #[test]
-    fn test_no_lint_any_duplicated() {
-        assert!(no_lint("y <- any(x)", "any_duplicated",));
-        assert!(no_lint("y <- duplicated(x)", "any_duplicated",));
-        assert!(no_lint("y <- any(!duplicated(x))", "any_duplicated",));
-        assert!(no_lint("y <- any(!duplicated(foo(x)))", "any_duplicated",))
     }
 }

@@ -27,25 +27,35 @@ impl LintChecker for AnyDuplicated {
             return diagnostics;
         }
 
-        get_args(ast).and_then(|args| args.first_child()).map(|y| {
-            if y.kind() == RSyntaxKind::R_CALL {
-                let fun = y.first_child().unwrap();
-                let fun_content = y.children().nth(1).unwrap().first_child().unwrap().text();
-                if fun.text_trimmed() == "duplicated" && fun.kind() == RSyntaxKind::R_IDENTIFIER {
-                    let (row, column) = find_row_col(ast, loc_new_lines);
-                    let range = ast.text_trimmed_range();
-                    diagnostics.push(Diagnostic {
-                        message: AnyDuplicated.into(),
-                        filename: file.into(),
-                        location: Location { row, column },
-                        fix: Fix {
-                            content: format!("anyDuplicated({}) > 0", fun_content),
-                            start: range.start().into(),
-                            end: range.end().into(),
-                        },
-                    })
-                };
-            }
+        "R_ARGUMENT_NAME_CLAUSE";
+
+        let unnamed_arg = ast.descendants().find(|x| {
+            x.kind() == RSyntaxKind::R_ARGUMENT
+                && x.first_child().unwrap().kind() != RSyntaxKind::R_ARGUMENT_NAME_CLAUSE
+        });
+
+        unnamed_arg.map(|x| {
+            x.first_child().map(|y| {
+                if y.kind() == RSyntaxKind::R_CALL {
+                    let fun = y.first_child().unwrap();
+                    let fun_content = y.children().nth(1).unwrap().first_child().unwrap().text();
+                    if fun.text_trimmed() == "duplicated" && fun.kind() == RSyntaxKind::R_IDENTIFIER
+                    {
+                        let (row, column) = find_row_col(ast, loc_new_lines);
+                        let range = ast.text_trimmed_range();
+                        diagnostics.push(Diagnostic {
+                            message: AnyDuplicated.into(),
+                            filename: file.into(),
+                            location: Location { row, column },
+                            fix: Fix {
+                                content: format!("anyDuplicated({}) > 0", fun_content),
+                                start: range.start().into(),
+                                end: range.end().into(),
+                            },
+                        })
+                    };
+                }
+            })
         });
         diagnostics
     }
