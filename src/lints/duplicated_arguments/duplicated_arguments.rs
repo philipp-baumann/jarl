@@ -27,8 +27,6 @@ impl LintChecker for DuplicatedArguments {
         let call = RCall::cast(ast.clone());
         let function = call.unwrap().function();
 
-        // println!("function: {:#?}", function);
-
         let fun_name = match function.unwrap() {
             AnyRExpression::RNamespaceExpression(x) => x.right().unwrap().text(),
             AnyRExpression::RExtractExpression(x) => x.right().unwrap().text(),
@@ -50,6 +48,9 @@ impl LintChecker for DuplicatedArguments {
 
         let named_args = ast
             .descendants()
+            .find(|x| x.kind() == RSyntaxKind::R_ARGUMENT_LIST)
+            .unwrap()
+            .children()
             .filter(|x| {
                 x.kind() == RSyntaxKind::R_ARGUMENT
                     && x.first_child().unwrap().kind() == RSyntaxKind::R_ARGUMENT_NAME_CLAUSE

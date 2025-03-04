@@ -66,6 +66,22 @@ mod tests {
     }
 
     #[test]
+    fn test_duplicated_arguments_no_nested_functions() {
+        assert!(no_lint(
+            "foo(x = {
+            bar(a = 1)
+            baz(a = 1)
+        })",
+            "duplicated_arguments"
+        ));
+    }
+
+    #[test]
+    fn test_duplicated_arguments_no_args() {
+        assert!(no_lint("foo()", "duplicated_arguments"));
+    }
+
+    #[test]
     fn test_duplicated_arguments_with_interceding_comments() {
         let expected_message = "Avoid duplicate arguments in function";
 
