@@ -4,7 +4,7 @@ use crate::trait_lint_checker::LintChecker;
 use crate::utils::find_row_col;
 use air_r_syntax::RSyntaxNode;
 use air_r_syntax::*;
-use biome_rowan::{AstNode, SyntaxNodeText};
+use biome_rowan::AstNode;
 
 pub struct DuplicatedArguments;
 
@@ -57,7 +57,7 @@ impl LintChecker for DuplicatedArguments {
             })
             .collect::<Vec<_>>();
 
-        if named_args.len() == 0 {
+        if named_args.is_empty() {
             return diagnostics;
         }
 

@@ -34,7 +34,7 @@ pub fn get_lint_and_fix_text(text: Vec<&str>) -> (String, String) {
 }
 
 pub fn get_lint_text(file: &NamedTempFile) -> String {
-    let original_content = fs::read_to_string(&file).expect("Failed to read file content");
+    let original_content = fs::read_to_string(file).expect("Failed to read file content");
     let output = Command::new("flir")
         .arg("--dir")
         .arg(file.path())
@@ -54,7 +54,7 @@ pub fn get_lint_text(file: &NamedTempFile) -> String {
 
 pub fn get_fixed_text(file: &NamedTempFile) -> String {
     use std::process::{Command, Stdio};
-    let original_content = fs::read_to_string(&file).expect("Failed to read file content");
+    let original_content = fs::read_to_string(file).expect("Failed to read file content");
 
     let _ = Command::new("flir")
         .arg("--dir")
@@ -91,5 +91,5 @@ pub fn no_lint(text: &str) -> bool {
         .expect("Failed to execute command");
 
     let lint_text = String::from_utf8_lossy(&output.stdout).to_string();
-    lint_text == ""
+    lint_text.is_empty()
 }

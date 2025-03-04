@@ -42,30 +42,24 @@ impl LintChecker for LengthTest {
         let mut rhs: String = "".to_string();
 
         if let Some(first_arg) = arguments.into_iter().nth(0) {
-            match first_arg {
-                Ok(x) => {
-                    let RArgumentFields { name_clause: _, value } = x.as_fields();
-                    let value = value.unwrap();
-                    match value {
-                        AnyRExpression::RBinaryExpression(y) => {
-                            let RBinaryExpressionFields { left, operator, right } = y.as_fields();
+            if let Ok(x) = first_arg {
+                let RArgumentFields { name_clause: _, value } = x.as_fields();
+                let value = value.unwrap();
+                if let AnyRExpression::RBinaryExpression(y) = value {
+                    let RBinaryExpressionFields { left, operator, right } = y.as_fields();
 
-                            let operator = operator.unwrap();
-                            arg_is_binary_expr = operator.kind() == EQUAL2
-                                || operator.kind() == GREATER_THAN
-                                || operator.kind() == GREATER_THAN_OR_EQUAL_TO
-                                || operator.kind() == LESS_THAN
-                                || operator.kind() == LESS_THAN_OR_EQUAL_TO
-                                || operator.kind() == NOT_EQUAL;
+                    let operator = operator.unwrap();
+                    arg_is_binary_expr = operator.kind() == EQUAL2
+                        || operator.kind() == GREATER_THAN
+                        || operator.kind() == GREATER_THAN_OR_EQUAL_TO
+                        || operator.kind() == LESS_THAN
+                        || operator.kind() == LESS_THAN_OR_EQUAL_TO
+                        || operator.kind() == NOT_EQUAL;
 
-                            operator_text.push_str(operator.text_trimmed());
-                            lhs.push_str(&left.unwrap().text());
-                            rhs.push_str(&right.unwrap().text());
-                        }
-                        _ => (),
-                    }
+                    operator_text.push_str(operator.text_trimmed());
+                    lhs.push_str(&left.unwrap().text());
+                    rhs.push_str(&right.unwrap().text());
                 }
-                Err(_) => (),
             }
         } else {
             return diagnostics;

@@ -1,5 +1,4 @@
 mod common;
-use common::*;
 
 // #[test]
 // fn test_lint_class_equals() {

@@ -10,7 +10,7 @@ mod scope;
 
 pub use self::model::ScopeId;
 use crate::SemanticEventExtractor;
-use air_r_syntax::{RIdentifier, RLanguage, RRoot, RSyntaxKind, RSyntaxNode, TextRange, TextSize};
+use air_r_syntax::{RIdentifier, RRoot, RSyntaxKind, TextRange, TextSize};
 use biome_rowan::AstNode;
 use rust_lapper::{Interval, Lapper};
 use rustc_hash::{FxHashMap, FxHashSet};

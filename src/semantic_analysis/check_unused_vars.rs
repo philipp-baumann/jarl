@@ -3,7 +3,7 @@ use crate::{BindingId, SemanticModel};
 
 pub fn check_unused_variables(model: &SemanticModel) -> Vec<Diagnostic> {
     let scopes = &model.data.scopes;
-    let mut diagnostics = vec![];
+    let diagnostics = vec![];
 
     for scope in scopes.iter() {
         // println!("scope: {:#?}", scope);

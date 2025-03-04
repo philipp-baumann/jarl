@@ -1,5 +1,5 @@
 use super::*;
-use air_r_syntax::{RIdentifier, RSyntaxNode, TextRange, TextSize};
+use air_r_syntax::{TextRange, TextSize};
 
 #[derive(Debug)]
 pub struct SemanticModelBindingData {

@@ -4,7 +4,6 @@ use biome_rowan::TextSize;
 use biome_rowan::{syntax::Preorder, AstNode, SyntaxNodeOptionExt, TokenText};
 use rustc_hash::FxHashMap;
 use std::collections::VecDeque;
-use std::mem;
 use RSyntaxKind::*;
 
 use crate::ScopeId;
@@ -215,19 +214,18 @@ impl SemanticEventExtractor {
 
     fn enter_identifier_usage(&mut self, node: &RSyntaxNode) {
         // Check if this identifier is part of a for loop variable declaration
-        let is_for_var = node.parent().map_or(false, |p| p.kind() == R_FOR_STATEMENT);
+        let is_for_var = node.parent().is_some_and(|p| p.kind() == R_FOR_STATEMENT);
 
         // Check if we're inside a for loop body
         let in_for_body = node.ancestors().any(|n| {
             n.kind() == R_BRACED_EXPRESSIONS
-                && n.parent().map_or(false, |p| p.kind() == R_FOR_STATEMENT)
+                && n.parent().is_some_and(|p| p.kind() == R_FOR_STATEMENT)
         });
 
         // Check the identifier is from a function definition, e.g. x in function(x)
         let in_function_def = node.ancestors().any(|n| {
             n.kind() == R_PARAMETERS
-                && n.parent()
-                    .map_or(false, |p| p.kind() == R_FUNCTION_DEFINITION)
+                && n.parent().is_some_and(|p| p.kind() == R_FUNCTION_DEFINITION)
         });
 
         if is_for_var {
@@ -262,16 +260,16 @@ impl SemanticEventExtractor {
         }
 
         // Check if this identifier is part of an assignment
-        let is_assignment = node.parent().map_or(false, |p| {
+        let is_assignment = node.parent().is_some_and(|p| {
             if p.kind() == R_BINARY_EXPRESSION {
                 let bin_expr = RBinaryExpression::cast(p.clone());
                 let RBinaryExpressionFields { left: _, operator, right: _ } =
                     bin_expr.unwrap().as_fields();
 
                 let operator = operator.unwrap();
-                return operator.kind() == ASSIGN;
+                operator.kind() == ASSIGN
             } else {
-                return false;
+                false
             }
         });
 
@@ -315,11 +313,8 @@ impl SemanticEventExtractor {
 
     #[inline]
     pub fn leave(&mut self, node: &RSyntaxNode) {
-        match node.kind() {
-            R_FUNCTION_DEFINITION => {
-                self.pop_scope(node.text_trimmed_range());
-            }
-            _ => {}
+        if node.kind() == R_FUNCTION_DEFINITION {
+            self.pop_scope(node.text_trimmed_range());
         }
     }
 

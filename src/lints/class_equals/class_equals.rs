@@ -68,10 +68,10 @@ impl LintChecker for ClassEquals {
         let class_name;
 
         if left_is_class {
-            fun_content = get_args(&lhs).and_then(|x| Some(x.text_trimmed()));
+            fun_content = get_args(&lhs).map(|x| x.text_trimmed());
             class_name = rhs.text_trimmed();
         } else {
-            fun_content = get_args(&rhs).and_then(|x| Some(x.text_trimmed()));
+            fun_content = get_args(&rhs).map(|x| x.text_trimmed());
             class_name = lhs.text_trimmed();
         };
 

@@ -1,7 +1,7 @@
 use crate::location::Location;
 use crate::message::*;
 use crate::trait_lint_checker::LintChecker;
-use crate::utils::{find_row_col, get_args};
+use crate::utils::find_row_col;
 use air_r_syntax::RSyntaxNode;
 use air_r_syntax::*;
 use biome_rowan::AstNode;
@@ -40,9 +40,9 @@ impl LintChecker for RedundantEquals {
         match operator.kind() {
             RSyntaxKind::EQUAL2 => {
                 let fix = if *left_is_true {
-                    format!("{}", right.text())
+                    right.text().to_string()
                 } else if *right_is_true {
-                    format!("{}", left.text())
+                    left.text().to_string()
                 } else if *left_is_false {
                     format!("!{}", right.text())
                 } else if *right_is_false {
@@ -70,9 +70,9 @@ impl LintChecker for RedundantEquals {
                 } else if *right_is_true {
                     format!("!{}", left.text())
                 } else if *left_is_false {
-                    format!("{}", right.text())
+                    right.text().to_string()
                 } else if *right_is_false {
-                    format!("{}", left.text())
+                    left.text().to_string()
                 } else {
                     return diagnostics;
                 };

@@ -84,7 +84,7 @@ fn main() {
                 let _ = fs::write(file, fixed_text);
             }
 
-            if !args.fix && &checks.len() > &0usize {
+            if !args.fix && !checks.is_empty() {
                 // println!("{}", file.to_str().unwrap().blue().bold());
                 for message in &checks {
                     println!("{}", message);

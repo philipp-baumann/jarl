@@ -3,7 +3,7 @@ use crate::SemanticEvent;
 use crate::SemanticEvent::*;
 
 use air_r_syntax::{RRoot, RSyntaxNode, TextRange};
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashMap;
 use std::collections::hash_map::Entry;
 
 pub struct SemanticModelBuilder {
