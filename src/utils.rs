@@ -11,7 +11,9 @@ pub fn find_new_lines(ast: &RSyntaxNode) -> Result<Vec<usize>> {
             .match_indices("\n")
             .map(|x| x.0)
             .collect::<Vec<usize>>()),
-        None => Err(anyhow!("Couldn't find root node")),
+        None => Err(anyhow!(
+            "Couldn't find root node. Maybe the document contains a parsing error?"
+        )),
     }
 }
 
@@ -74,5 +76,34 @@ pub fn parse_rules(rules: &String) -> Vec<&str> {
         ALL_RULES.to_vec()
     } else {
         rules.split(",").collect::<Vec<&str>>()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use std::fs;
+    use std::process::{Command, Stdio};
+    use tempfile::Builder;
+
+    #[test]
+    fn parsing_error_doesnt_panic() {
+        let temp_file = Builder::new()
+            .prefix("test-flir")
+            .suffix(".R")
+            .tempfile()
+            .unwrap();
+
+        fs::write(&temp_file, "blah = fun(1) {").expect("Failed to write initial content");
+
+        let output = Command::new("flir")
+            .arg("--dir")
+            .arg(temp_file.path())
+            .stdout(Stdio::piped())
+            .output()
+            .expect("Failed to execute command");
+
+        let err_message = String::from_utf8_lossy(&output.stderr).to_string();
+        assert!(err_message.contains("Maybe the document contains a parsing error"))
     }
 }

@@ -30,7 +30,6 @@ mod tests {
             expected_message,
             "class_equals",
         );
-        // TODO: those two should fix
         expect_lint(
             "if ('character' %in% class(x)) 1",
             expected_message,
@@ -65,7 +64,6 @@ mod tests {
                     "if (class(x) == 'character') 1",
                     "is_regression <- 'lm' == class(x)",
                     "is_regression <- \"lm\" == class(x)",
-                    // TODO: those two should fix
                     "if ('character' %in% class(x)) 1",
                     "if (class(x) %in% 'character') 1",
                     "if (class(x) != 'character') 1",
