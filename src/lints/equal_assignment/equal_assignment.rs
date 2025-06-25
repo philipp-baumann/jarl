@@ -7,6 +7,34 @@ use biome_rowan::AstNode;
 
 pub struct EqualAssignment;
 
+/// ## What it does
+///
+/// Checks for usage of `=` as assignment operator.
+///
+/// ## Why is this bad?
+///
+/// This is not "bad" strictly speaking since in most cases using `=` and `<-`
+/// is equivalent. Some very popular packages use `=` without problems.
+///
+/// Nonetheless, `<-` is more popular and this rule may be useful to avoid
+/// mixing both operators in a codebase.
+///
+/// ## Example
+///
+/// ```r
+/// x = "a"
+/// ```
+///
+/// Use instead:
+/// ```r
+/// x <- "a"
+/// ```
+///
+/// ## References
+///
+/// See:
+/// * https://style.tidyverse.org/syntax.html#assignment-1
+/// * https://stackoverflow.com/a/1742550
 impl Violation for EqualAssignment {
     fn name(&self) -> String {
         "equal_assignment".to_string()

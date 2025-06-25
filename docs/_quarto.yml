@@ -21,8 +21,13 @@ website:
       background: light
       contents:
         - rules.qmd
+        - rules/any_duplicated.qmd
         - rules/any_is_na.qmd
         - rules/class_equals.qmd
+        - rules/duplicated_arguments.qmd
+        - rules/equal_assignment.qmd
+        - rules/equals_na.qmd
+        - rules/length_levels.qmd
 
 
 # format:
