@@ -1,10 +1,9 @@
-library(fs)
 library(yaml)
 
-if (fs::dir_exists("docs/rules")) {
-  fs::dir_delete("docs/rules")
+if (dir.exists("docs/rules")) {
+  unlink("docs/rules", recursive = TRUE)
 }
-fs::dir_create("docs/rules")
+dir.create("docs/rules")
 
 rule_dirs <- list.files("src/lints", full.names = TRUE)
 rule_dirs <- rule_dirs[!grepl("mod.rs", rule_dirs)]
@@ -47,6 +46,14 @@ for (i in seq_along(docs)) {
 doc_names <- sort(rule_names)
 
 quarto_yml <- read_yaml("docs/_quarto.yml")
-quarto_yml$website$sidebar[[1]]$contents <- c("rules.qmd", paste0("rules/", doc_names, ".qmd"))
-write_yaml(quarto_yml, "docs/_quarto.yml", handlers = list(
-  logical = verbatim_logical))
+quarto_yml$website$sidebar[[1]]$contents <- c(
+  "rules.qmd",
+  paste0("rules/", doc_names, ".qmd")
+)
+write_yaml(
+  quarto_yml,
+  "docs/_quarto.yml",
+  handlers = list(
+    logical = verbatim_logical
+  )
+)
