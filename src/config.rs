@@ -13,7 +13,9 @@ pub struct Config<'a> {
     /// field `rules`. If we apply fixes too, then this might be different from
     /// `rules` because it may filter out rules that have unsafe fixes.
     pub rules_to_apply: Vec<&'a str>,
+    /// Did the user pass the --fix flag?
     pub should_fix: bool,
+    /// Did the user pass the --unsafe-fixes flag?
     pub unsafe_fixes: bool,
 }
 
