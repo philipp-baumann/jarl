@@ -22,6 +22,11 @@ crate-type = ["cdylib", "rlib"]
 [profile.release]
 lto = true
 
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
 [build-dependencies]
 
 [dependencies]
