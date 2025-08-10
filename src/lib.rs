@@ -1,7 +1,7 @@
-// pub mod analyze;
+pub mod analyze;
 pub mod args;
 pub mod check;
-pub mod check_ast;
+pub mod check_expression;
 pub mod config;
 pub mod fix;
 pub mod lints;
@@ -9,7 +9,6 @@ pub mod location;
 pub mod message;
 pub mod rule_table;
 pub mod settings;
-pub mod trait_lint_checker;
 pub mod traits;
 pub mod utils;
 pub mod utils_test;

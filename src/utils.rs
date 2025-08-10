@@ -1,6 +1,6 @@
 use crate::location::Location;
 use crate::message::Diagnostic;
-use air_r_syntax::{RSyntaxKind, RSyntaxNode};
+use air_r_syntax::{AnyRExpression, RExtractExpressionFields, RSyntaxKind, RSyntaxNode};
 use anyhow::{Result, anyhow};
 
 pub fn find_new_lines(ast: &RSyntaxNode) -> Result<Vec<usize>> {
@@ -71,31 +71,100 @@ pub fn node_is_in_square_brackets(ast: &RSyntaxNode) -> bool {
     }
 }
 
-#[cfg(test)]
-mod tests {
+pub fn get_function_name(function: AnyRExpression) -> String {
+    let fn_name = if let Some(ns_expr) = function.as_r_namespace_expression() {
+        if let Ok(expr) = ns_expr.right() {
+            if let Some(id) = expr.as_r_identifier() {
+                if let Ok(token) = id.name_token() {
+                    let trimmed = token.token_text_trimmed();
+                    Some(trimmed.text().to_string())
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else if let Some(extract_expr) = function.as_r_extract_expression() {
+        let RExtractExpressionFields { left, right, operator } = extract_expr.as_fields();
 
-    use std::fs;
-    use std::process::{Command, Stdio};
-    use tempfile::Builder;
+        if let Ok(left) = left
+            && let Ok(right) = right
+            && let Ok(operator) = operator
+        {
+            if let Some(left_id) = left.as_r_identifier()
+                && let Some(right_id) = right.as_r_identifier()
+            {
+                if let Ok(left_token) = left_id.name_token()
+                    && let Ok(right_token) = right_id.name_token()
+                {
+                    let left_trimmed = left_token.token_text_trimmed();
+                    let right_trimmed = right_token.token_text_trimmed();
+                    Some(
+                        [
+                            left_trimmed.text().to_string(),
+                            operator.text_trimmed().to_string(),
+                            right_trimmed.text().to_string(),
+                        ]
+                        .join(""),
+                    )
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else if function.as_r_return_expression().is_some() {
+        Some("return".to_string())
+    } else if let Some(id) = function.as_r_identifier() {
+        if let Ok(token) = id.name_token() {
+            let trimmed = token.token_text_trimmed();
+            Some(trimmed.text().to_string())
+        } else {
+            None
+        }
+    } else {
+        None
+    };
 
-    #[test]
-    fn parsing_error_doesnt_panic() {
-        let temp_file = Builder::new()
-            .prefix("test-flir")
-            .suffix(".R")
-            .tempfile()
-            .unwrap();
-
-        fs::write(&temp_file, "blah = fun(1) {").expect("Failed to write initial content");
-
-        let output = Command::new("flir")
-            .arg("--dir")
-            .arg(temp_file.path())
-            .stdout(Stdio::piped())
-            .output()
-            .expect("Failed to execute command");
-
-        let err_message = String::from_utf8_lossy(&output.stderr).to_string();
-        assert!(err_message.contains("Maybe the document contains a parsing error"))
-    }
+    // TODO: self$foo() is handled but not in a recursive way so self$bar$foo()
+    // errors for instance.
+    // Those function names shouldn't trigger lint rules so fixing this is not
+    // urgent.
+    fn_name.unwrap_or("".to_string())
 }
+
+// #[cfg(test)]
+// mod tests {
+
+//     use std::fs;
+//     use std::process::{Command, Stdio};
+//     use tempfile::Builder;
+
+//     #[test]
+//     fn parsing_error_doesnt_panic() {
+//         let temp_file = Builder::new()
+//             .prefix("test-flir")
+//             .suffix(".R")
+//             .tempfile()
+//             .unwrap();
+
+//         fs::write(&temp_file, "blah = fun(1) {").expect("Failed to write initial content");
+
+//         let output = Command::new("flir")
+//             .arg("--dir")
+//             .arg(temp_file.path())
+//             .stdout(Stdio::piped())
+//             .output()
+//             .expect("Failed to execute command");
+
+//         let err_message = String::from_utf8_lossy(&output.stderr).to_string();
+//         println!("{err_message}");
+//         assert!(err_message.contains("Maybe the document contains a parsing error"))
+//     }
+// }

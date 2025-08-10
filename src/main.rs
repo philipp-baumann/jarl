@@ -30,6 +30,8 @@ fn main() -> Result<()> {
         .into_iter()
         .filter_map(Result::ok)
         .collect::<Vec<_>>();
+
+    // use std::path::Path;
     // let paths = vec![Path::new("demos/foo.R").to_path_buf()];
 
     let config = build_config(&args, paths);
@@ -38,13 +40,13 @@ fn main() -> Result<()> {
 
     if !args.fix && !diagnostics.is_empty() {
         for message in &diagnostics {
-            println!("{}", message);
+            println!("{message}");
         }
     }
 
     if let Some(start) = start {
         let duration = start.elapsed();
-        println!("\nChecked files in: {:?}", duration);
+        println!("\nChecked files in: {duration:?}");
     }
 
     Ok(())

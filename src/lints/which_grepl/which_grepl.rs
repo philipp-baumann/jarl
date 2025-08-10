@@ -1,8 +1,8 @@
 use crate::message::*;
-use crate::trait_lint_checker::LintChecker;
-use air_r_syntax::RSyntaxNode;
+use crate::utils::get_function_name;
 use air_r_syntax::*;
-use anyhow::{Context, Result};
+use anyhow::Result;
+use biome_rowan::AstNode;
 
 pub struct WhichGrepl;
 
@@ -42,57 +42,48 @@ impl Violation for WhichGrepl {
     }
 }
 
-impl LintChecker for WhichGrepl {
-    fn check(&self, ast: &RSyntaxNode, file: &str) -> Result<Vec<Diagnostic>> {
-        let mut diagnostics = vec![];
-        if ast.kind() != RSyntaxKind::R_CALL {
-            return Ok(diagnostics);
-        }
-        let call = ast
-            .first_child()
-            .context("Couldn't find function name")?
-            .text_trimmed();
+pub fn which_grepl(ast: &RCall) -> Result<Option<Diagnostic>> {
+    let RCallFields { function, arguments } = ast.as_fields();
 
-        if call != "which" {
-            return Ok(diagnostics);
-        }
+    let function = function?;
+    let outer_fn_name = get_function_name(function);
 
-        let unnamed_arg = ast.descendants().find(|x| {
-            x.kind() == RSyntaxKind::R_ARGUMENT
-                && x.first_child()
-                    .map(|child| child.kind() != RSyntaxKind::R_ARGUMENT_NAME_CLAUSE)
-                    .unwrap_or(false)
-        });
-
-        let y = unnamed_arg
-            .unwrap()
-            .first_child()
-            .context("No first child found")?;
-
-        if y.kind() == RSyntaxKind::R_CALL {
-            let fun = y.first_child().context("No function found")?;
-            let fun_content = y
-                .children()
-                .nth(1)
-                .context("Internal error")?
-                .first_child()
-                .context("Internal error")?
-                .text();
-
-            if fun.text_trimmed() == "grepl" && fun.kind() == RSyntaxKind::R_IDENTIFIER {
-                let range = ast.text_trimmed_range();
-                diagnostics.push(Diagnostic::new(
-                    WhichGrepl,
-                    file,
-                    range,
-                    Fix {
-                        content: format!("grep({})", fun_content),
-                        start: range.start().into(),
-                        end: range.end().into(),
-                    },
-                ))
-            }
-        }
-        Ok(diagnostics)
+    if outer_fn_name != "which" {
+        return Ok(None);
     }
+
+    let items = arguments?.items();
+
+    let unnamed_arg = items
+        .into_iter()
+        .find(|x| x.clone().unwrap().name_clause().is_none());
+
+    let value = unnamed_arg.unwrap()?.value();
+
+    if let Some(inner) = value
+        && let Some(inner2) = inner.as_r_call()
+    {
+        let RCallFields { function, arguments } = inner2.as_fields();
+
+        let function = function?;
+        let inner_fn_name = get_function_name(function);
+
+        if inner_fn_name != "grepl" {
+            return Ok(None);
+        }
+
+        let inner_content = arguments?.items().into_syntax().text();
+        let range = ast.clone().into_syntax().text_trimmed_range();
+        let diagnostic = Diagnostic::new(
+            WhichGrepl,
+            range,
+            Fix {
+                content: format!("grep({inner_content})"),
+                start: range.start().into(),
+                end: range.end().into(),
+            },
+        );
+        return Ok(Some(diagnostic));
+    }
+    Ok(None)
 }

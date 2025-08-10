@@ -7,7 +7,7 @@ pub(crate) mod duplicated_arguments;
 pub(crate) mod empty_assignment;
 pub(crate) mod equal_assignment;
 pub(crate) mod equals_na;
-pub(crate) mod expect_length;
+// pub(crate) mod expect_length;
 pub(crate) mod length_levels;
 pub(crate) mod length_test;
 pub(crate) mod lengths;
@@ -25,7 +25,7 @@ pub fn all_rules_and_safety() -> HashMap<&'static str, bool> {
         ("empty_assignment", true),
         ("equal_assignment", true),
         ("equals_na", true),
-        ("expect_length", false),
+        // ("expect_length", false),
         ("length_levels", true),
         ("length_test", true),
         ("lengths", true),

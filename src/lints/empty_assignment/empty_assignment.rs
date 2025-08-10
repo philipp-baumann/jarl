@@ -1,6 +1,4 @@
 use crate::message::*;
-use crate::trait_lint_checker::LintChecker;
-use air_r_syntax::RSyntaxNode;
 use air_r_syntax::*;
 use anyhow::Result;
 use biome_rowan::AstNode;
@@ -12,55 +10,45 @@ impl Violation for EmptyAssignment {
         "empty_assignment".to_string()
     }
     fn body(&self) -> String {
-        "Assign NULL explicitly or, whenever possible, allocate the empty object`.".to_string()
+        "Assign NULL explicitly or, whenever possible, allocate the empty object with the right type and size.".to_string()
     }
 }
 
-impl LintChecker for EmptyAssignment {
-    fn check(&self, ast: &RSyntaxNode, file: &str) -> Result<Vec<Diagnostic>> {
-        let mut diagnostics = vec![];
-        let bin_expr = RBinaryExpression::cast(ast.clone());
+pub fn empty_assignment(ast: &RBinaryExpression) -> Result<Option<Diagnostic>> {
+    let RBinaryExpressionFields { left, operator, right } = ast.as_fields();
 
-        if bin_expr.is_none() {
-            return Ok(diagnostics);
-        }
+    let left = left?;
+    let right = right?;
+    let operator = operator?;
 
-        let RBinaryExpressionFields { left, operator, right } = bin_expr.unwrap().as_fields();
+    if operator.kind() != RSyntaxKind::EQUAL
+        && operator.kind() != RSyntaxKind::ASSIGN
+        && operator.kind() != RSyntaxKind::ASSIGN_RIGHT
+    {
+        return Ok(None);
+    };
 
-        let left = left?;
-        let right = right?;
-        let operator = operator?;
-
-        if operator.kind() != RSyntaxKind::EQUAL
-            && operator.kind() != RSyntaxKind::ASSIGN
-            && operator.kind() != RSyntaxKind::ASSIGN_RIGHT
-        {
-            return Ok(diagnostics);
-        };
-
-        let value_is_empty = match operator.kind() {
-            RSyntaxKind::EQUAL | RSyntaxKind::ASSIGN => {
-                match RBracedExpressions::cast(right.into()) {
-                    Some(right) => right.expressions().text() == "",
-                    _ => {
-                        return Ok(diagnostics);
-                    }
-                }
+    let value_is_empty = match operator.kind() {
+        RSyntaxKind::EQUAL | RSyntaxKind::ASSIGN => match RBracedExpressions::cast(right.into()) {
+            Some(right) => right.expressions().text() == "",
+            _ => {
+                return Ok(None);
             }
-            RSyntaxKind::ASSIGN_RIGHT => match RBracedExpressions::cast(left.into()) {
-                Some(left) => left.expressions().text() == "",
-                _ => {
-                    return Ok(diagnostics);
-                }
-            },
-            _ => unreachable!("cannot have something else than an assignment"),
-        };
+        },
+        RSyntaxKind::ASSIGN_RIGHT => match RBracedExpressions::cast(left.into()) {
+            Some(left) => left.expressions().text() == "",
+            _ => {
+                return Ok(None);
+            }
+        },
+        _ => unreachable!("cannot have something else than an assignment"),
+    };
 
-        if value_is_empty {
-            let range = ast.text_trimmed_range();
-            diagnostics.push(Diagnostic::new(EmptyAssignment, file, range, Fix::empty()));
-        }
-
-        Ok(diagnostics)
+    if value_is_empty {
+        let range = ast.clone().into_syntax().text_trimmed_range();
+        let diagnostic = Diagnostic::new(EmptyAssignment, range, Fix::empty());
+        return Ok(Some(diagnostic));
     }
+
+    Ok(None)
 }
