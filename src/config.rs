@@ -29,6 +29,18 @@ pub struct Config {
 pub fn build_config(args: &CliArgs, paths: Vec<PathBuf>) -> Result<Config> {
     let rules = parse_rules_cli(&args.rules);
 
+    // If we don't know the minimum R version used, we deactivate all rules
+    // that only exists starting from a specific version.
+    let rules = if args.min_r_version.is_none() {
+        rules
+            .iter()
+            .filter(|x| x.minimum_r_version.is_none())
+            .cloned()
+            .collect::<RuleTable>()
+    } else {
+        rules
+    };
+
     // Resolve the interaction between --fix and --unsafe-fixes first. Using
     // --unsafe-fixes implies using --fix, but the opposite is not true.
     let rules_to_apply = match (args.fix, args.unsafe_fixes) {

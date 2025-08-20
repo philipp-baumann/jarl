@@ -142,9 +142,18 @@ fn test_minimum_r_version() -> anyhow::Result<()> {
     let directory = directory.path();
 
     let test_path = "test.R";
-    // grepv() rule only exists for R >= 4.5.0
     let test_contents = "grep('a', x, value = TRUE)";
     std::fs::write(directory.join(test_path), test_contents)?;
+
+    // By default, if we don't know the min R version, we disable rules that
+    // only exist starting from a specific version.
+    insta::assert_snapshot!(
+        &mut Command::new(binary_path())
+            .current_dir(directory)
+            .run()
+            .normalize_os_executable_name()
+    );
+    // grepv() rule only exists for R >= 4.5.0
     insta::assert_snapshot!(
         &mut Command::new(binary_path())
             .current_dir(directory)
