@@ -88,7 +88,7 @@ pub fn is_numeric(ast: &RBinaryExpression) -> Result<Option<Diagnostic>> {
         IsNumeric,
         range,
         Fix {
-            content: format!("is.numeric{}", left_arg),
+            content: format!("is.numeric{left_arg}"),
             start: range.start().into(),
             end: range.end().into(),
         },
