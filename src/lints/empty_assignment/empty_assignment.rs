@@ -30,13 +30,13 @@ pub fn empty_assignment(ast: &RBinaryExpression) -> Result<Option<Diagnostic>> {
 
     let value_is_empty = match operator.kind() {
         RSyntaxKind::EQUAL | RSyntaxKind::ASSIGN => match RBracedExpressions::cast(right.into()) {
-            Some(right) => right.expressions().text() == "",
+            Some(right) => right.expressions().into_syntax().text_trimmed() == "",
             _ => {
                 return Ok(None);
             }
         },
         RSyntaxKind::ASSIGN_RIGHT => match RBracedExpressions::cast(left.into()) {
-            Some(left) => left.expressions().text() == "",
+            Some(left) => left.expressions().into_syntax().text_trimmed() == "",
             _ => {
                 return Ok(None);
             }

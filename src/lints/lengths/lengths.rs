@@ -46,7 +46,7 @@ pub fn lengths(ast: &RCall) -> Result<Option<Diagnostic>> {
     let function = function?;
 
     let funs_to_watch = ["sapply", "vapply", "map_dbl", "map_int"];
-    if !funs_to_watch.contains(&function.text().as_str()) {
+    if !funs_to_watch.contains(&function.into_syntax().text_trimmed().to_string().as_str()) {
         return Ok(None);
     }
 
@@ -58,7 +58,9 @@ pub fn lengths(ast: &RCall) -> Result<Option<Diagnostic>> {
         if arg_fun
             .value()
             .context("Found named argument without any value")?
-            .text()
+            .into_syntax()
+            .text_trimmed()
+            .to_string()
             == "length"
         {
             let range = ast.clone().into_syntax().text_trimmed_range();
@@ -66,7 +68,10 @@ pub fn lengths(ast: &RCall) -> Result<Option<Diagnostic>> {
                 Lengths,
                 range,
                 Fix {
-                    content: format!("lengths({})", arg_x.unwrap().text()),
+                    content: format!(
+                        "lengths({})",
+                        arg_x.unwrap().into_syntax().text_trimmed().to_string()
+                    ),
                     start: range.start().into(),
                     end: range.end().into(),
                 },

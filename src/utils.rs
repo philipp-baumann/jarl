@@ -11,7 +11,6 @@ use biome_rowan::AstSeparatedList;
 pub fn find_new_lines(ast: &RSyntaxNode) -> Result<Vec<usize>> {
     match ast.first_child() {
         Some(rootnode) => Ok(rootnode
-            .text()
             .to_string()
             .match_indices("\n")
             .map(|x| x.0)
@@ -266,7 +265,7 @@ pub fn get_nested_functions_content(
             return Ok(None);
         }
 
-        let inner_content = arguments?.items().into_syntax().text().to_string();
+        let inner_content = arguments?.items().into_syntax().to_string();
 
         Ok(Some(inner_content))
     } else {

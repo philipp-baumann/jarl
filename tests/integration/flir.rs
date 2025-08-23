@@ -37,6 +37,26 @@ fn test_parsing_error() -> anyhow::Result<()> {
 }
 
 #[test]
+fn test_parsing_weird_raw_strings() -> anyhow::Result<()> {
+    let directory = TempDir::new()?;
+    let directory = directory.path();
+
+    let path = "test.R";
+    std::fs::write(
+        directory.join(path),
+        "c(r\"(abc(\\w+))\")\nr\"(c(\"\\dots\"))\"",
+    )?;
+    insta::assert_snapshot!(
+        &mut Command::new(binary_path())
+            .current_dir(directory)
+            .run()
+            .normalize_os_executable_name()
+    );
+
+    Ok(())
+}
+
+#[test]
 fn test_no_lints() -> anyhow::Result<()> {
     let directory = TempDir::new()?;
     let directory = directory.path();

@@ -37,15 +37,15 @@ pub fn duplicated_arguments(ast: &RCall) -> Result<Option<Diagnostic>> {
     let RCallFields { function, arguments } = ast.as_fields();
 
     let fun_name = match function? {
-        AnyRExpression::RNamespaceExpression(x) => x.right()?.text(),
-        AnyRExpression::RExtractExpression(x) => x.right()?.text(),
-        AnyRExpression::RCall(x) => x.function()?.text(),
-        AnyRExpression::RSubset(x) => x.arguments()?.text(),
-        AnyRExpression::RSubset2(x) => x.arguments()?.text(),
-        AnyRExpression::RIdentifier(x) => x.text(),
-        AnyRExpression::AnyRValue(x) => x.text(),
-        AnyRExpression::RParenthesizedExpression(x) => x.body()?.text(),
-        AnyRExpression::RReturnExpression(x) => x.text(),
+        AnyRExpression::RNamespaceExpression(x) => x.right()?.into_syntax().text_trimmed(),
+        AnyRExpression::RExtractExpression(x) => x.right()?.into_syntax().text_trimmed(),
+        AnyRExpression::RCall(x) => x.function()?.into_syntax().text_trimmed(),
+        AnyRExpression::RSubset(x) => x.arguments()?.into_syntax().text_trimmed(),
+        AnyRExpression::RSubset2(x) => x.arguments()?.into_syntax().text_trimmed(),
+        AnyRExpression::RIdentifier(x) => x.into_syntax().text_trimmed(),
+        AnyRExpression::AnyRValue(x) => x.into_syntax().text_trimmed(),
+        AnyRExpression::RParenthesizedExpression(x) => x.body()?.into_syntax().text_trimmed(),
+        AnyRExpression::RReturnExpression(x) => x.into_syntax().text_trimmed(),
         _ => {
             return Err(anyhow!(
                 "couldn't find function name for duplicated_arguments linter.",
@@ -54,7 +54,7 @@ pub fn duplicated_arguments(ast: &RCall) -> Result<Option<Diagnostic>> {
     };
 
     let whitelisted_funs = ["c", "mutate", "summarize", "transmute"];
-    if whitelisted_funs.contains(&fun_name.as_str()) {
+    if whitelisted_funs.contains(&fun_name.to_string().as_str()) {
         return Ok(None);
     }
 
@@ -67,7 +67,12 @@ pub fn duplicated_arguments(ast: &RCall) -> Result<Option<Diagnostic>> {
             if let Some(name_clause) = &fields.name_clause
                 && let Ok(name) = name_clause.name()
             {
-                Some(name.text().to_string().replace(&['\'', '"', '`'][..], ""))
+                Some(
+                    name.into_syntax()
+                        .text_trimmed()
+                        .to_string()
+                        .replace(&['\'', '"', '`'][..], ""),
+                )
             } else {
                 None
             }

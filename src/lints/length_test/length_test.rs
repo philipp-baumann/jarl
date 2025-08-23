@@ -70,8 +70,8 @@ pub fn length_test(ast: &RCall) -> Result<Option<Diagnostic>> {
                         || operator.kind() == NOT_EQUAL;
 
                     operator_text.push_str(operator.text_trimmed());
-                    lhs.push_str(&left?.text());
-                    rhs.push_str(&right?.text());
+                    lhs.push_str(&left?.into_syntax().text_trimmed().to_string());
+                    rhs.push_str(&right?.into_syntax().text_trimmed().to_string());
                 }
             }
         }

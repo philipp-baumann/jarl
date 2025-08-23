@@ -60,13 +60,13 @@ pub fn redundant_equals(ast: &RBinaryExpression) -> Result<Option<Diagnostic>> {
     let diagnostic = match operator.kind() {
         RSyntaxKind::EQUAL2 => {
             let fix = if *left_is_true {
-                right.text().to_string()
+                right.into_syntax().text_trimmed().to_string()
             } else if *right_is_true {
-                left.text().to_string()
+                left.into_syntax().text_trimmed().to_string()
             } else if *left_is_false {
-                format!("!{}", right.text())
+                format!("!{}", right.into_syntax().text_trimmed())
             } else if *right_is_false {
-                format!("!{}", left.text())
+                format!("!{}", left.into_syntax().text_trimmed())
             } else {
                 return Ok(None);
             };
@@ -84,13 +84,13 @@ pub fn redundant_equals(ast: &RBinaryExpression) -> Result<Option<Diagnostic>> {
         }
         RSyntaxKind::NOT_EQUAL => {
             let fix = if *left_is_true {
-                format!("!{}", right.text())
+                format!("!{}", right.into_syntax().text_trimmed())
             } else if *right_is_true {
-                format!("!{}", left.text())
+                format!("!{}", left.into_syntax().text_trimmed())
             } else if *left_is_false {
-                right.text().to_string()
+                right.into_syntax().text_trimmed().to_string()
             } else if *right_is_false {
-                left.text().to_string()
+                left.into_syntax().text_trimmed().to_string()
             } else {
                 return Ok(None);
             };
