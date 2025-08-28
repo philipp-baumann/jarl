@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io::Write;
 
-use crate::message::Diagnostic;
+use crate::diagnostic::Diagnostic;
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, ValueEnum, Serialize, Deserialize)]
 pub enum OutputFormat {
