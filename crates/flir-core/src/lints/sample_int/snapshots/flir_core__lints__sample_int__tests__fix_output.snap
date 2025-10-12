@@ -2,44 +2,44 @@
 source: crates/flir-core/src/lints/sample_int/mod.rs
 expression: "get_fixed_text(vec![\"sample(1:10, 2)\", \"sample(1L:10L, 2)\",\n\"sample(n = 1:10, 2)\", \"sample(2, n = 1:10)\", \"sample(size = 2, n = 1:10)\",\n\"sample(replace = TRUE, letters)\",], \"sample_int\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 sample(1:10, 2)
-  NEW:
-  ====
+NEW:
+====
 sample.int(10, 2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(1L:10L, 2)
-  NEW:
-  ====
+NEW:
+====
 sample.int(10L, 2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(n = 1:10, 2)
-  NEW:
-  ====
+NEW:
+====
 sample.int(10, 2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(2, n = 1:10)
-  NEW:
-  ====
+NEW:
+====
 sample.int(10, 2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(size = 2, n = 1:10)
-  NEW:
-  ====
+NEW:
+====
 sample.int(10, size = 2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(replace = TRUE, letters)
-  NEW:
-  ====
+NEW:
+====
 sample(replace = TRUE, letters)

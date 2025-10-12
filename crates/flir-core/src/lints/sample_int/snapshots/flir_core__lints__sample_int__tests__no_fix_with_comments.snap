@@ -2,42 +2,42 @@
 source: crates/flir-core/src/lints/sample_int/mod.rs
 expression: "get_fixed_text(vec![\"# leading comment\\nsample(1:10, 2)\",\n\"sample(\\n  # comment\\n  1:10, 2\\n)\", \"sample(1:n,\\n    # comment\\n    2)\",\n\"sample(1:10, 2) # trailing comment\",], \"sample_int\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 # leading comment
 sample(1:10, 2)
-  NEW:
-  ====
+NEW:
+====
 # leading comment
 sample.int(10, 2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(
   # comment
   1:10, 2
 )
-  NEW:
-  ====
+NEW:
+====
 sample(
   # comment
   1:10, 2
 )
 
-  OLD:
-  ====
+OLD:
+====
 sample(1:n,
     # comment
     2)
-  NEW:
-  ====
+NEW:
+====
 sample(1:n,
     # comment
     2)
 
-  OLD:
-  ====
+OLD:
+====
 sample(1:10, 2) # trailing comment
-  NEW:
-  ====
+NEW:
+====
 sample.int(10, 2) # trailing comment

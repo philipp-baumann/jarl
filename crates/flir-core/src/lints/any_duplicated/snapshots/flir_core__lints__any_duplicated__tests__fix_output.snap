@@ -2,23 +2,23 @@
 source: crates/flir-core/src/lints/any_duplicated/mod.rs
 expression: "get_fixed_text(vec![\"any(duplicated(x))\", \"any(duplicated(foo(x)))\",\n\"any(duplicated(x), na.rm = TRUE)\",], \"any_duplicated\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 any(duplicated(x))
-  NEW:
-  ====
+NEW:
+====
 anyDuplicated(x) > 0
 
-  OLD:
-  ====
+OLD:
+====
 any(duplicated(foo(x)))
-  NEW:
-  ====
+NEW:
+====
 anyDuplicated(foo(x)) > 0
 
-  OLD:
-  ====
+OLD:
+====
 any(duplicated(x), na.rm = TRUE)
-  NEW:
-  ====
+NEW:
+====
 anyDuplicated(x) > 0

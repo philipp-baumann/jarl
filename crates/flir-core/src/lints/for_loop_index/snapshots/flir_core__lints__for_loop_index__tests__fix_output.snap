@@ -2,9 +2,9 @@
 source: crates/flir-core/src/lints/for_loop_index/mod.rs
 expression: "get_fixed_text(vec![\"for (x in x) {}\",], \"for_loop_index\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 for (x in x) {}
-  NEW:
-  ====
+NEW:
+====
 for (x in x) {}

@@ -2,65 +2,65 @@
 source: crates/flir-core/src/lints/redundant_equals/mod.rs
 expression: "get_fixed_text(vec![\"a == TRUE\", \"TRUE == a\", \"a == FALSE\", \"FALSE == a\",\n\"a != TRUE\", \"TRUE != a\", \"a != FALSE\", \"FALSE != a\",\n\"foo(a(b = 1)) == TRUE\"], \"redundant_equals\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 a == TRUE
-  NEW:
-  ====
+NEW:
+====
 a
 
-  OLD:
-  ====
+OLD:
+====
 TRUE == a
-  NEW:
-  ====
+NEW:
+====
 a
 
-  OLD:
-  ====
+OLD:
+====
 a == FALSE
-  NEW:
-  ====
+NEW:
+====
 !a
 
-  OLD:
-  ====
+OLD:
+====
 FALSE == a
-  NEW:
-  ====
+NEW:
+====
 !a
 
-  OLD:
-  ====
+OLD:
+====
 a != TRUE
-  NEW:
-  ====
+NEW:
+====
 !a
 
-  OLD:
-  ====
+OLD:
+====
 TRUE != a
-  NEW:
-  ====
+NEW:
+====
 !a
 
-  OLD:
-  ====
+OLD:
+====
 a != FALSE
-  NEW:
-  ====
+NEW:
+====
 a
 
-  OLD:
-  ====
+OLD:
+====
 FALSE != a
-  NEW:
-  ====
+NEW:
+====
 a
 
-  OLD:
-  ====
+OLD:
+====
 foo(a(b = 1)) == TRUE
-  NEW:
-  ====
+NEW:
+====
 foo(a(b = 1))

@@ -2,65 +2,65 @@
 source: crates/flir-core/src/lints/equals_na/mod.rs
 expression: "get_fixed_text(vec![\"x == NA\", \"x == NA_integer_\", \"x == NA_real_\",\n\"x == NA_logical_\", \"x == NA_character_\", \"x == NA_complex_\", \"x != NA\",\n\"foo(x(y)) == NA\", \"NA == x\",], \"equals_na\", None,)"
 ---
-  OLD:
-  ====
+OLD:
+====
 x == NA
-  NEW:
-  ====
+NEW:
+====
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x == NA_integer_
-  NEW:
-  ====
+NEW:
+====
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x == NA_real_
-  NEW:
-  ====
+NEW:
+====
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x == NA_logical_
-  NEW:
-  ====
+NEW:
+====
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x == NA_character_
-  NEW:
-  ====
+NEW:
+====
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x == NA_complex_
-  NEW:
-  ====
+NEW:
+====
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x != NA
-  NEW:
-  ====
+NEW:
+====
 !is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 foo(x(y)) == NA
-  NEW:
-  ====
+NEW:
+====
 is.na(foo(x(y)))
 
-  OLD:
-  ====
+OLD:
+====
 NA == x
-  NEW:
-  ====
+NEW:
+====
 is.na(x)

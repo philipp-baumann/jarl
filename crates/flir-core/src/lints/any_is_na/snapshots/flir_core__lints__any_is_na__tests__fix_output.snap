@@ -2,23 +2,23 @@
 source: crates/flir-core/src/lints/any_is_na/mod.rs
 expression: "get_fixed_text(vec![\"any(is.na(x))\", \"any(is.na(foo(x)))\",\n\"any(is.na(x), na.rm = TRUE)\",], \"any_is_na\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 any(is.na(x))
-  NEW:
-  ====
+NEW:
+====
 anyNA(x)
 
-  OLD:
-  ====
+OLD:
+====
 any(is.na(foo(x)))
-  NEW:
-  ====
+NEW:
+====
 anyNA(foo(x))
 
-  OLD:
-  ====
+OLD:
+====
 any(is.na(x), na.rm = TRUE)
-  NEW:
-  ====
+NEW:
+====
 anyNA(x)

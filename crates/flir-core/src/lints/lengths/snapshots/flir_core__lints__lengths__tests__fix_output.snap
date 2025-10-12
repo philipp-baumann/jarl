@@ -2,23 +2,23 @@
 source: crates/flir-core/src/lints/lengths/mod.rs
 expression: "get_fixed_text(vec![\"sapply(x, length)\", \"sapply(x, FUN = length)\",\n\"vapply(mtcars, length, integer(1))\",], \"lengths\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 sapply(x, length)
-  NEW:
-  ====
+NEW:
+====
 lengths(x)
 
-  OLD:
-  ====
+OLD:
+====
 sapply(x, FUN = length)
-  NEW:
-  ====
+NEW:
+====
 lengths(x)
 
-  OLD:
-  ====
+OLD:
+====
 vapply(mtcars, length, integer(1))
-  NEW:
-  ====
+NEW:
+====
 lengths(mtcars)

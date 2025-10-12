@@ -2,51 +2,51 @@
 source: crates/flir-core/src/lints/length_test/mod.rs
 expression: "get_fixed_text(vec![\"length(x != 0)\", \"length(x >= 0)\", \"length(x <= 0)\",\n\"length(x > 0)\", \"length(x < 0)\", \"length(x < 0)\", \"length(x + y == 2)\"],\n\"length_test\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 length(x != 0)
-  NEW:
-  ====
+NEW:
+====
 length(x) != 0
 
-  OLD:
-  ====
+OLD:
+====
 length(x >= 0)
-  NEW:
-  ====
+NEW:
+====
 length(x) >= 0
 
-  OLD:
-  ====
+OLD:
+====
 length(x <= 0)
-  NEW:
-  ====
+NEW:
+====
 length(x) <= 0
 
-  OLD:
-  ====
+OLD:
+====
 length(x > 0)
-  NEW:
-  ====
+NEW:
+====
 length(x) > 0
 
-  OLD:
-  ====
+OLD:
+====
 length(x < 0)
-  NEW:
-  ====
+NEW:
+====
 length(x) < 0
 
-  OLD:
-  ====
+OLD:
+====
 length(x < 0)
-  NEW:
-  ====
+NEW:
+====
 length(x) < 0
 
-  OLD:
-  ====
+OLD:
+====
 length(x + y == 2)
-  NEW:
-  ====
+NEW:
+====
 length(x + y) == 2

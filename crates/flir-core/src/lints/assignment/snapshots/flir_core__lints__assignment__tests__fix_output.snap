@@ -2,65 +2,65 @@
 source: crates/flir-core/src/lints/assignment/mod.rs
 expression: "get_fixed_text(vec![\"blah=1\", \"blah = 1\", \"blah = fun(1)\",\n\"names(blah) = 'a'\", \"x[[1]] = 2\", \"fun((blah = fun(1)))\", \"1 -> fun\",\n\"'a' -> names(fun)\", \"2 -> x[[1]]\",], \"assignment\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 blah=1
-  NEW:
-  ====
+NEW:
+====
 blah <- 1
 
-  OLD:
-  ====
+OLD:
+====
 blah = 1
-  NEW:
-  ====
+NEW:
+====
 blah <- 1
 
-  OLD:
-  ====
+OLD:
+====
 blah = fun(1)
-  NEW:
-  ====
+NEW:
+====
 blah <- fun(1)
 
-  OLD:
-  ====
+OLD:
+====
 names(blah) = 'a'
-  NEW:
-  ====
+NEW:
+====
 names(blah) <- 'a'
 
-  OLD:
-  ====
+OLD:
+====
 x[[1]] = 2
-  NEW:
-  ====
+NEW:
+====
 x[[1]] <- 2
 
-  OLD:
-  ====
+OLD:
+====
 fun((blah = fun(1)))
-  NEW:
-  ====
+NEW:
+====
 fun((blah <- fun(1)))
 
-  OLD:
-  ====
+OLD:
+====
 1 -> fun
-  NEW:
-  ====
+NEW:
+====
 fun <- 1
 
-  OLD:
-  ====
+OLD:
+====
 'a' -> names(fun)
-  NEW:
-  ====
+NEW:
+====
 names(fun) <- 'a'
 
-  OLD:
-  ====
+OLD:
+====
 2 -> x[[1]]
-  NEW:
-  ====
+NEW:
+====
 x[[1]] <- 2

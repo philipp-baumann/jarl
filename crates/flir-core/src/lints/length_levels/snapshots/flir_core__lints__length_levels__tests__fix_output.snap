@@ -2,16 +2,16 @@
 source: crates/flir-core/src/lints/length_levels/mod.rs
 expression: "get_fixed_text(vec![\"2:length(levels(x))\", \"2:length(levels(foo(a)))\",],\n\"length_levels\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 2:length(levels(x))
-  NEW:
-  ====
+NEW:
+====
 2:nlevels(x)
 
-  OLD:
-  ====
+OLD:
+====
 2:length(levels(foo(a)))
-  NEW:
-  ====
+NEW:
+====
 2:nlevels(foo(a))

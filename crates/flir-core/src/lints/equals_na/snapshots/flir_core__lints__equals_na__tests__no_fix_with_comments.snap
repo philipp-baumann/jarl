@@ -2,36 +2,36 @@
 source: crates/flir-core/src/lints/equals_na/mod.rs
 expression: "get_fixed_text(vec![\"# leading comment\\nx == NA\", \"x # comment\\n== NA\",\n\"# comment\\nx == NA\", \"x == NA # trailing comment\",], \"equals_na\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 # leading comment
 x == NA
-  NEW:
-  ====
+NEW:
+====
 # leading comment
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x # comment
 == NA
-  NEW:
-  ====
+NEW:
+====
 x # comment
 == NA
 
-  OLD:
-  ====
+OLD:
+====
 # comment
 x == NA
-  NEW:
-  ====
+NEW:
+====
 # comment
 is.na(x)
 
-  OLD:
-  ====
+OLD:
+====
 x == NA # trailing comment
-  NEW:
-  ====
+NEW:
+====
 is.na(x) # trailing comment

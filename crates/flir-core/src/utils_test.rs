@@ -219,8 +219,7 @@ pub fn get_fixed_text(text: Vec<&str>, rule: &str, min_r_version: Option<&str>) 
         let modified_content = apply_fixes(txt, rule, false, min_r_version);
 
         output.push_str(
-            format!("  OLD:\n  ====\n{original_content}\n  NEW:\n  ====\n{modified_content}\n\n")
-                .as_str(),
+            format!("OLD:\n====\n{original_content}\nNEW:\n====\n{modified_content}\n\n").as_str(),
         );
     }
 
@@ -297,8 +296,7 @@ pub fn get_unsafe_fixed_text(text: Vec<&str>, rule: &str) -> String {
         let modified_content = apply_fixes(txt, rule, true, None);
 
         output.push_str(
-            format!("  OLD:\n  ====\n{original_content}\n  NEW:\n  ====\n{modified_content}\n\n")
-                .as_str(),
+            format!("OLD:\n====\n{original_content}\nNEW:\n====\n{modified_content}\n\n").as_str(),
         );
     }
 

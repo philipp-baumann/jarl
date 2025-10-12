@@ -2,44 +2,44 @@
 source: crates/flir-core/src/lints/sort/mod.rs
 expression: "get_fixed_text(vec![\"# leading comment\\nx[order(x)]\",\n\"x[\\n  # comment\\n  order(x)\\n]\", \"x[order(\\n    # comment\\n    x\\n  )]\",\n\"x[order(x)] # trailing comment\",], \"sort\", None)"
 ---
-  OLD:
-  ====
+OLD:
+====
 # leading comment
 x[order(x)]
-  NEW:
-  ====
+NEW:
+====
 # leading comment
 sort(x)
 
-  OLD:
-  ====
+OLD:
+====
 x[
   # comment
   order(x)
 ]
-  NEW:
-  ====
+NEW:
+====
 x[
   # comment
   order(x)
 ]
 
-  OLD:
-  ====
+OLD:
+====
 x[order(
     # comment
     x
   )]
-  NEW:
-  ====
+NEW:
+====
 x[order(
     # comment
     x
   )]
 
-  OLD:
-  ====
+OLD:
+====
 x[order(x)] # trailing comment
-  NEW:
-  ====
+NEW:
+====
 sort(x) # trailing comment
