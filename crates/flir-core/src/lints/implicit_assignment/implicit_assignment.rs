@@ -73,15 +73,14 @@ pub fn implicit_assignment(ast: &RBinaryExpression) -> anyhow::Result<Option<Dia
         result
     };
 
-    // We want to not report cases like
+    // We want to skip cases like
     // ```r
     // if (TRUE) x <- 1
     // for (i in 1:2) x <- 1
     // while (TRUE) x <- 1
     // ```
-    // Therefore, we want to skip cases that have an RIfStatement /
-    // RForStatement / RWhileStatement as ancestor AND whose previous sibling
-    // is ")".
+    // i.e., we want to skip cases that are in the body of RIfStatement /
+    // RForStatement / RWhileStatement.
 
     let ancestor_is_if = {
         let mut result = false;
