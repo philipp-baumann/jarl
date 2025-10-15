@@ -95,17 +95,17 @@ pub fn check() -> Result<ExitStatus> {
         }
     }
 
+    if let Some(start) = start {
+        let duration = start.elapsed();
+        println!("\nChecked files in: {duration:?}");
+    }
+
     if !all_errors.is_empty() {
         return Ok(ExitStatus::Error);
     }
 
     if all_diagnostics.is_empty() {
         return Ok(ExitStatus::Success);
-    }
-
-    if let Some(start) = start {
-        let duration = start.elapsed();
-        println!("\nChecked files in: {duration:?}");
     }
 
     Ok(ExitStatus::Failure)
