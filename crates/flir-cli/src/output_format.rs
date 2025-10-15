@@ -11,6 +11,8 @@ pub enum OutputFormat {
     /// Print diagnostics in a concise format, one per line
     #[default]
     Concise,
+    /// Print diagnostics as GitHub format
+    Github,
     /// Print diagnostics as JSON
     Json,
 }
@@ -128,6 +130,40 @@ impl Emitter for JsonEmitter {
         _errors: &[(String, anyhow::Error)],
     ) -> anyhow::Result<()> {
         serde_json::to_writer_pretty(writer, diagnostics)?;
+        Ok(())
+    }
+}
+
+pub struct GithubEmitter;
+
+impl Emitter for GithubEmitter {
+    fn emit<W: Write>(
+        &self,
+        writer: &mut W,
+        diagnostics: &[&Diagnostic],
+        _errors: &[(String, anyhow::Error)],
+    ) -> anyhow::Result<()> {
+        for diagnostic in diagnostics {
+            let (row, col) = match diagnostic.location {
+                Some(loc) => (loc.row(), loc.column()),
+                None => {
+                    unreachable!("Row/col locations must have been parsed successfully before.")
+                }
+            };
+
+            write!(
+                writer,
+                "::warning file={file},line={row},col={col}::",
+                file = diagnostic.filename.to_string_lossy()
+            )?;
+
+            write!(
+                writer,
+                "[{}] {}\n",
+                diagnostic.message.name, diagnostic.message.body
+            )?;
+        }
+
         Ok(())
     }
 }

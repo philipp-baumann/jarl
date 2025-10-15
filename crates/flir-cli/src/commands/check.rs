@@ -10,7 +10,7 @@ use colored::Colorize;
 use std::time::Instant;
 
 use crate::args::CheckCommand;
-use crate::output_format;
+use crate::output_format::{self, GithubEmitter};
 use crate::status::ExitStatus;
 
 use output_format::{ConciseEmitter, Emitter, JsonEmitter, OutputFormat};
@@ -87,11 +87,14 @@ pub fn check() -> Result<ExitStatus> {
     let mut stdout = std::io::stdout();
 
     match args.output_format {
+        OutputFormat::Concise => {
+            ConciseEmitter.emit(&mut stdout, &all_diagnostics_flat, &all_errors)?;
+        }
         OutputFormat::Json => {
             JsonEmitter.emit(&mut stdout, &all_diagnostics_flat, &all_errors)?;
         }
-        OutputFormat::Concise => {
-            ConciseEmitter.emit(&mut stdout, &all_diagnostics_flat, &all_errors)?;
+        OutputFormat::Github => {
+            GithubEmitter.emit(&mut stdout, &all_diagnostics_flat, &all_errors)?;
         }
     }
 
