@@ -13,13 +13,13 @@
 
 macOS and Linux:
 ```
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/etiennebacher/flir2/releases/download/v0.0.16/flir-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/etiennebacher/flir2/releases/download/v0.0.17/flir-installer.sh | sh
 ```
 
 Windows:
 
 ```
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/etiennebacher/flir2/releases/download/v0.0.16/flir-installer.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/etiennebacher/flir2/releases/download/v0.0.17/flir-installer.ps1 | iex"
 ```
 
 Alternatively, if you have Rust installed, you can get the development version with:

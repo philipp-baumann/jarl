@@ -596,7 +596,7 @@ checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
 name = "flir-cli"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "anyhow",
  "clap",
@@ -616,7 +616,7 @@ dependencies = [
 
 [[package]]
 name = "flir-core"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "air_r_parser",
  "air_r_syntax",
@@ -637,7 +637,7 @@ dependencies = [
 
 [[package]]
 name = "flir-lsp"
-version = "0.0.16"
+version = "0.0.17"
 dependencies = [
  "anyhow",
  "clap",
