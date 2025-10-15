@@ -10,13 +10,21 @@ all_files <- list.files(
 )
 all_files_name <- basename(all_files)
 
-all_repos <- sub("^([^_]+)_([^_]+)_.*\\.json$", "\\1/\\2", all_files_name) |>
-  unique()
-
+repos_raw <- Sys.getenv("TEST_REPOS")
+repo_lines <- strsplit(repos_raw, "\n")[[1]]
+repo_lines <- repo_lines[repo_lines != ""]
+repo_parts <- strsplit(repo_lines, "@")
+all_repos <- setNames(
+  lapply(repo_parts, function(x) trimws(x[2])), # the commit SHAs
+  sapply(repo_parts, function(x) trimws(x[1])) # the repo names
+)
 
 cat("### Ecosystem checks\n\n", file = "lint_comparison.md")
 
-for (repos in all_repos) {
+for (i in seq_along(all_repos)) {
+  repos <- names(all_repos)[i]
+  repos_sha <- all_repos[[i]]
+
   message("Processing results of ", repos)
   main_results_json <- jsonlite::read_json(paste0(
     "results/",
@@ -80,6 +88,8 @@ for (repos in all_repos) {
   msg_header <- paste0(
     "<details><summary><a href=\"https://github.com/",
     repos,
+    "/tree/",
+    repos_sha,
     "\">",
     repos,
     "</a>: +",
@@ -95,7 +105,17 @@ for (repos in all_repos) {
       c(
         "<br>\nNew violations (first 100):<pre>",
         paste0(
+          "<a href=\"https://github.com/",
+          repos,
+          "/tree/",
+          repos_sha,
+          "/",
           new_lints$filename,
+          "#L",
+          new_lints$row,
+          "\">",
+          new_lints$filename,
+          "</a>",
           "[",
           new_lints$row,
           ":",
@@ -118,7 +138,17 @@ for (repos in all_repos) {
       c(
         "<br>\nViolations removed (first 100):<pre>",
         paste0(
+          "<a href=\"https://github.com/",
+          repos,
+          "/tree/",
+          repos_sha,
+          "/",
           deleted_lints$filename,
+          "#L",
+          deleted_lints$row,
+          "\">",
+          deleted_lints$filename,
+          "</a>",
           "[",
           deleted_lints$row,
           ":",
