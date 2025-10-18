@@ -5,13 +5,13 @@
 	"version": "0.1.2",
 	"publisher": "etiennebacher",
 	"license": "MIT",
-	"homepage": "https://github.com/etiennebacher/jarl2",
+	"homepage": "https://github.com/etiennebacher/jarl",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/etiennebacher/jarl2.git"
+		"url": "https://github.com/etiennebacher/jarl.git"
 	},
 	"bugs": {
-		"url": "https://github.com/etiennebacher/jarl2/issues"
+		"url": "https://github.com/etiennebacher/jarl/issues"
 	},
 	"keywords": [
 		"r",

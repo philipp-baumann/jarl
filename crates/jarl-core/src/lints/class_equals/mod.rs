@@ -105,7 +105,7 @@ mod tests {
         );
         expect_no_lint("all(sup %in% class(model))", "class_equals", None);
 
-        // TODO: https://github.com/etiennebacher/jarl2/issues/32
+        // TODO: https://github.com/etiennebacher/jarl/issues/32
         // expect_no_lint("class(x)[class(x) == 'foo']", "class_equals");
     }
 

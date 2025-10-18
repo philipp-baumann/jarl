@@ -54,7 +54,7 @@ mod tests {
         expect_diagnostic_highlight("x=1", "assignment", "x=");
         expect_diagnostic_highlight("1 -> x", "assignment", "-> x");
         expect_diagnostic_highlight("foo() |>\n  bar() |>\n  baz() -> x", "assignment", "-> x");
-        // TODO: uncomment when https://github.com/etiennebacher/jarl2/issues/89 is fixed
+        // TODO: uncomment when https://github.com/etiennebacher/jarl/issues/89 is fixed
         // expect_diagnostic_highlight("1 -> names(\nx)", "assignment", "-> names(\nx)");
     }
 }

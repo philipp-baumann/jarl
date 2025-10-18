@@ -10,7 +10,7 @@ resolver = "3"
 authors = ["Etienne Bacher"]
 edition = "2024"
 license-file = "LICENSE.md"
-repository = "https://github.com/etiennebacher/jarl2/"
+repository = "https://github.com/etiennebacher/jarl/"
 readme = "README.md"
 
 [workspace.dependencies]

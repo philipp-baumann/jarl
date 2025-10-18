@@ -2,32 +2,25 @@
 <div align="center"><i>Just Another R Linter</i> </div>
 
 <br><br>
-`jarl` is a linter for R. It is written in Rust and built upon Air, a fast formatter for R.
+`jarl` is a linter for R. It is written in Rust and built on [Air](https://posit-dev.github.io/air/), a fast formatter for R.
 
 ## Installation
 
-> [!WARNING]
-> While the repo is private, I recommend not using the binaries provided in the Releases. Those are not
-> frequently updated due to limitations in Github Actions on private repos.
->
-> For now, the best way to get the binary is to clone the repo and build the binary from source with
-> `cargo install --path . --profile=release`
-
 macOS and Linux:
 ```
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/etiennebacher/jarl2/releases/download/v0.0.17/jarl-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/etiennebacher/jarl/releases/download/v0.0.17/jarl-installer.sh | sh
 ```
 
 Windows:
 
 ```
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/etiennebacher/jarl2/releases/download/v0.0.17/jarl-installer.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/etiennebacher/jarl/releases/download/v0.0.17/jarl-installer.ps1 | iex"
 ```
 
 Alternatively, if you have Rust installed, you can get the development version with:
 
 ```
-cargo install --git https://github.com/etiennebacher/jarl2
+cargo install --git https://github.com/etiennebacher/jarl
 ```
 
 ## Acknowledgements

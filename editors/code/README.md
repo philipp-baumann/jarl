@@ -16,7 +16,7 @@ A Visual Studio Code extension that provides linting support for R code through 
 1. Build the extension:
    ```bash
    cargo build --release
-   cd /path_to/jarl2/editors/code
+   cd /path_to/jarl/editors/code
    cp ../../target/release/jarl bundled/bin/jarl # don't forget to use target/debug if used `cargo build`
    npm install
    npm run package
