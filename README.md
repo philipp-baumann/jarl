@@ -1,7 +1,7 @@
 <div align="center"><h1>jarl</h1></div>
 <div align="center"><i>Just Another R Linter</i> </div>
 
-<br><br>
+<br>
 `jarl` is a linter for R. It is written in Rust and built on [Air](https://posit-dev.github.io/air/), a fast formatter for R.
 
 ## Installation

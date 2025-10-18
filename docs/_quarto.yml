@@ -5,6 +5,7 @@ format:
     theme: morph
     css: styles.css
     toc: true
+    code-copy: true
 language:
   search-text-placeholder: Search (press "s")
 execute:
@@ -30,8 +31,6 @@ website:
       href: index.qmd
     - text: Rules
       href: rules.md
-    - text: Development
-      href: development.md
     - text: About
       href: about.md
   sidebar:
