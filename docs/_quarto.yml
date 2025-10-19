@@ -1,5 +1,7 @@
 project:
   type: website
+filters:
+  - newpagelink.lua
 format:
   html:
     theme: morph
