@@ -6,7 +6,7 @@ For now, this only supports two fields: `select` and `ignore` to determine which
 This file looks like this:
 
 ```toml
-[linter]
+[lint]
 select = []
 ignore = []
 ```
@@ -14,7 +14,7 @@ ignore = []
 This has the same capabilities as `--select-rules` and `--ignore-rules`, so it is possible to pass rule names and names of groups of rules:
 
 ```toml
-[linter]
+[lint]
 select = ["PERF", "length_test"]
 ignore = ["SUSP"]
 ```
@@ -25,7 +25,7 @@ ignore = ["SUSP"]
 Arguments in the command line always have the priority on those specified in `jarl.toml`.
 For example, if you have the following file:
 ```toml
-[linter]
+[lint]
 select = ["PERF", "length_test"]
 ignore = []
 ```

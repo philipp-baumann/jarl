@@ -9,10 +9,10 @@ exit_code: 255
 ----- stderr -----
 jarl failed
   Cause: Failed to parse [TEMP_DIR]/jarl.toml:
-TOML parse error at line 2, column 8
+TOML parse error at line 2, column 6
   |
-2 | [linter
-  |        ^
+2 | [lint
+  |      ^
 unclosed table, expected `]`
 
 

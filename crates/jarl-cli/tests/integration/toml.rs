@@ -14,11 +14,11 @@ fn test_empty_toml_uses_all_rules() -> anyhow::Result<()> {
     let test_contents = "any(is.na(x))\nany(duplicated(x))";
     std::fs::write(directory.join(test_path), test_contents)?;
 
-    // Empty TOML with just [linter] section
+    // Empty TOML with just [lint] section
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 "#,
     )?;
 
@@ -44,7 +44,7 @@ fn test_empty_select_array() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = []
 "#,
     )?;
@@ -66,7 +66,7 @@ select = []
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = [""]
 "#,
     )?;
@@ -97,7 +97,7 @@ fn test_empty_ignore_array() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 ignore = []
 "#,
     )?;
@@ -119,7 +119,7 @@ ignore = []
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 ignore = [""]
 "#,
     )?;
@@ -149,7 +149,7 @@ fn test_toml_select_rules() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na"]
 "#,
     )?;
@@ -179,7 +179,7 @@ fn test_toml_select_rules_with_group() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na", "SUSP"]
 "#,
     )?;
@@ -213,7 +213,7 @@ fn test_toml_ignore_rules() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 ignore = ["any_duplicated"]
 "#,
     )?;
@@ -244,7 +244,7 @@ fn test_toml_select_and_ignore() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na", "any_duplicated", "length_levels"]
 ignore = ["length_levels"]
 "#,
@@ -278,7 +278,7 @@ fn test_cli_select_overrides_toml() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na"]
 ignore = ["length_levels"]
 "#,
@@ -317,7 +317,7 @@ fn test_cli_ignore_adds_to_toml() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na", "any_duplicated", "length_levels"]
 ignore = ["length_levels"]
 "#,
@@ -354,7 +354,7 @@ fn test_cli_overrides_toml_completely() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na"]
 ignore = ["any_duplicated"]
 "#,
@@ -393,7 +393,7 @@ fn test_invalid_toml_select_rule() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na", "foo"]
 "#,
     )?;
@@ -424,7 +424,7 @@ fn test_invalid_toml_ignore_rule() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 ignore = ["foo", "bar"]
 "#,
     )?;
@@ -455,7 +455,7 @@ fn test_malformed_toml_syntax() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter
+[lint
 select = ["any_is_na"
 "#,
     )?;
@@ -486,7 +486,7 @@ fn test_unknown_toml_field() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na"]
 unknown_field = ["value"]
 "#,
@@ -547,7 +547,7 @@ fn test_empty_string_in_toml_ignore() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 ignore = ["any_duplicated", "", "any_is_na"]
 "#,
     )?;
@@ -578,7 +578,7 @@ fn test_whitespace_only_in_toml_select() -> anyhow::Result<()> {
     std::fs::write(
         directory.join("jarl.toml"),
         r#"
-[linter]
+[lint]
 select = ["any_is_na", "   ", "any_duplicated"]
 "#,
     )?;

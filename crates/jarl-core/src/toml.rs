@@ -49,7 +49,7 @@ pub fn parse_jarl_toml(path: &Path) -> Result<TomlOptions, ParseTomlError> {
 pub struct TomlOptions {
     #[serde(flatten)]
     pub global: GlobalTomlOptions,
-    pub linter: Option<LinterTomlOptions>,
+    pub lint: Option<LinterTomlOptions>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, serde::Deserialize)]
@@ -175,7 +175,7 @@ pub fn find_jarl_toml<P: AsRef<Path>>(path: P) -> Option<PathBuf> {
 
 impl TomlOptions {
     pub fn into_settings(self, _root: &Path) -> anyhow::Result<Settings> {
-        let linter = self.linter.unwrap_or_default();
+        let linter = self.lint.unwrap_or_default();
 
         let linter = LinterSettings { select: linter.select, ignore: linter.ignore };
 
