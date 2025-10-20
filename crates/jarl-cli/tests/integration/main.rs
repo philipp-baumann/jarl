@@ -8,6 +8,7 @@
 /// - Dead code analysis of integration test helpers https://github.com/rust-lang/rust/issues/46379
 mod allow_dirty;
 mod allow_no_vcs;
+mod assignment_op;
 mod comments;
 mod help;
 mod helpers;

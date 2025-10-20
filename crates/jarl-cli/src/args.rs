@@ -100,6 +100,12 @@ pub struct CheckCommand {
         help="Output serialization format for violations."
     )]
     pub output_format: OutputFormat,
+    #[arg(
+        long,
+        value_enum,
+        help = "Assignment operator to use, can be either `<-` or `=`."
+    )]
+    pub assignment_op: Option<String>,
 }
 
 #[derive(Clone, Debug, Parser)]

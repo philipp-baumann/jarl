@@ -8,7 +8,7 @@ mod tests {
     fn test_lint_assignment() {
         use insta::assert_snapshot;
 
-        let expected_message = "Use <- for assignment";
+        let expected_message = "Use `<-` for assignment";
         expect_lint("blah=1", expected_message, "assignment", None);
         expect_lint("blah = 1", expected_message, "assignment", None);
         expect_lint("blah = fun(1)", expected_message, "assignment", None);

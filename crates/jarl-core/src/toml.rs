@@ -143,6 +143,11 @@ pub struct LinterTomlOptions {
     // - `extendr-wrappers.R`
     // - `import-standalone-*.R`
     // pub default_exclude: Option<bool>,
+    /// # Assignment operator to use
+    ///
+    /// This can be either `"<-"` or `"="`. Both are valid in R, so this
+    /// option is useful to ensure consistency in a project.
+    pub assignment: Option<String>,
 }
 
 /// Return the path to the `jarl.toml` or `.jarl.toml` file in a given directory.
@@ -177,7 +182,11 @@ impl TomlOptions {
     pub fn into_settings(self, _root: &Path) -> anyhow::Result<Settings> {
         let linter = self.lint.unwrap_or_default();
 
-        let linter = LinterSettings { select: linter.select, ignore: linter.ignore };
+        let linter = LinterSettings {
+            select: linter.select,
+            ignore: linter.ignore,
+            assignment: linter.assignment,
+        };
 
         Ok(Settings { linter })
     }

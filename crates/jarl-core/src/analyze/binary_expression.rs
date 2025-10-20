@@ -13,6 +13,9 @@ use crate::lints::redundant_equals::redundant_equals::redundant_equals;
 pub fn binary_expression(r_expr: &RBinaryExpression, checker: &mut Checker) -> anyhow::Result<()> {
     let node = r_expr.syntax();
 
+    if checker.is_rule_enabled("assignment") && !checker.should_skip_rule(node, "assignment") {
+        checker.report_diagnostic(assignment(r_expr, checker.assignment_op)?);
+    }
     if checker.is_rule_enabled("class_equals") && !checker.should_skip_rule(node, "class_equals") {
         checker.report_diagnostic(class_equals(r_expr)?);
     }
@@ -20,9 +23,6 @@ pub fn binary_expression(r_expr: &RBinaryExpression, checker: &mut Checker) -> a
         && !checker.should_skip_rule(node, "empty_assignment")
     {
         checker.report_diagnostic(empty_assignment(r_expr)?);
-    }
-    if checker.is_rule_enabled("assignment") && !checker.should_skip_rule(node, "assignment") {
-        checker.report_diagnostic(assignment(r_expr)?);
     }
     if checker.is_rule_enabled("equals_na") && !checker.should_skip_rule(node, "equals_na") {
         checker.report_diagnostic(equals_na(r_expr)?);

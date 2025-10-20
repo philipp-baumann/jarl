@@ -55,6 +55,9 @@ Options:
           
           [default: concise]
 
+      --assignment-op <ASSIGNMENT_OP>
+          Assignment operator to use, can be either `<-` or `=`.
+
   -h, --help
           Print help (see a summary with '-h')
 

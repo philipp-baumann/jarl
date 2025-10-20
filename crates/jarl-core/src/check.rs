@@ -3,10 +3,10 @@ use crate::suppression::SuppressionManager;
 use crate::vcs::check_version_control;
 use air_fs::relativize_path;
 use air_r_parser::RParserOptions;
-use air_r_syntax::RForStatementFields;
 use air_r_syntax::{
     AnyRExpression, RBinaryExpressionFields, RIfStatementFields, RWhileStatementFields,
 };
+use air_r_syntax::{RForStatementFields, RSyntaxKind};
 use anyhow::{Context, Result};
 use rayon::prelude::*;
 use std::fs;
@@ -92,15 +92,18 @@ pub struct Checker {
     pub minimum_r_version: Option<(u32, u32, u32)>,
     // Tracks comment-based suppression directives like `# nolint`
     pub suppression: SuppressionManager,
+    // Which assignment operator is preferred?
+    pub assignment_op: RSyntaxKind,
 }
 
 impl Checker {
-    fn new(suppression: SuppressionManager) -> Self {
+    fn new(suppression: SuppressionManager, assignment_op: RSyntaxKind) -> Self {
         Self {
             diagnostics: vec![],
             rules: RuleTable::empty(),
             minimum_r_version: None,
             suppression,
+            assignment_op,
         }
     }
 
@@ -146,7 +149,7 @@ pub fn get_checks(contents: &str, file: &Path, config: Config) -> Result<Vec<Dia
         return Ok(vec![]);
     }
 
-    let mut checker = Checker::new(suppression);
+    let mut checker = Checker::new(suppression, config.assignment_op);
     checker.rules = config.rules_to_apply;
     checker.minimum_r_version = config.minimum_r_version;
     for expr in expressions_vec {

@@ -4,6 +4,7 @@ use crate::{
     rule_table::RuleTable,
     settings::Settings,
 };
+use air_r_syntax::RSyntaxKind;
 use air_workspace::resolve::PathResolver;
 use anyhow::Result;
 use std::{collections::HashSet, fs, path::PathBuf};
@@ -31,6 +32,8 @@ pub struct ArgsConfig {
     pub allow_dirty: bool,
     /// Apply fixes even if there is no version control system?
     pub allow_no_vcs: bool,
+    /// Which assignment operator to use? Can be `"<-"` or `"="`.
+    pub assignment_op: Option<String>,
 }
 
 #[derive(Clone)]
@@ -57,6 +60,9 @@ pub struct Config {
     pub allow_dirty: bool,
     /// Apply fixes even if there is no version control system?
     pub allow_no_vcs: bool,
+    /// Which assignment operator to use? Can be `RSyntaxKind::ASSIGN` or
+    /// `RSyntaxKind::EQUAL`.
+    pub assignment_op: RSyntaxKind,
 }
 
 pub fn build_config(
@@ -122,6 +128,8 @@ pub fn build_config(
         rules_to_apply
     };
 
+    let assignment_op = parse_assignment(&check_config, toml_settings)?;
+
     Ok(Config {
         paths,
         rules,
@@ -131,6 +139,7 @@ pub fn build_config(
         minimum_r_version,
         allow_dirty: check_config.allow_dirty,
         allow_no_vcs: check_config.allow_no_vcs,
+        assignment_op,
     })
 }
 
@@ -448,4 +457,54 @@ fn filter_rules_by_version(
                 .collect::<RuleTable>()
         }
     }
+}
+
+fn parse_assignment(
+    check_config: &ArgsConfig,
+    toml_settings: Option<&Settings>,
+) -> Result<RSyntaxKind> {
+    let out: RSyntaxKind;
+
+    if let Some(assignment_op) = &check_config.assignment_op {
+        match assignment_op.as_str() {
+            "<-" => {
+                out = RSyntaxKind::ASSIGN;
+            }
+            "=" => {
+                out = RSyntaxKind::EQUAL;
+            }
+            _ => {
+                return Err(anyhow::anyhow!(
+                    "Invalid value in `--assignment-op`: {}",
+                    assignment_op
+                ));
+            }
+        }
+    } else {
+        if let Some(settings) = toml_settings {
+            let assignment_op = &settings.linter.assignment;
+            if let Some(assignment_op) = assignment_op {
+                match assignment_op.as_str() {
+                    "<-" => {
+                        out = RSyntaxKind::ASSIGN;
+                    }
+                    "=" => {
+                        out = RSyntaxKind::EQUAL;
+                    }
+                    _ => {
+                        return Err(anyhow::anyhow!(
+                            "Invalid value in `--assignment-op`: {}",
+                            assignment_op
+                        ));
+                    }
+                }
+            } else {
+                out = RSyntaxKind::ASSIGN;
+            }
+        } else {
+            out = RSyntaxKind::ASSIGN;
+        }
+    };
+
+    Ok(out)
 }

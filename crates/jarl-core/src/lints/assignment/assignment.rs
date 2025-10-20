@@ -2,8 +2,6 @@ use crate::diagnostic::*;
 use air_r_syntax::*;
 use biome_rowan::AstNode;
 
-pub struct EqualAssignment;
-
 /// ## What it does
 ///
 /// Checks for usage of `=` as assignment operator.
@@ -33,23 +31,23 @@ pub struct EqualAssignment;
 ///
 /// - [https://style.tidyverse.org/syntax.html#assignment-1](https://style.tidyverse.org/syntax.html#assignment-1)
 /// - [https://stackoverflow.com/a/1742550](https://stackoverflow.com/a/1742550)
-impl Violation for EqualAssignment {
-    fn name(&self) -> String {
-        "assignment".to_string()
-    }
-    fn body(&self) -> String {
-        "Use <- for assignment.".to_string()
-    }
-}
-
-pub fn assignment(ast: &RBinaryExpression) -> anyhow::Result<Option<Diagnostic>> {
+pub fn assignment(
+    ast: &RBinaryExpression,
+    assignment_op: RSyntaxKind,
+) -> anyhow::Result<Option<Diagnostic>> {
     let RBinaryExpressionFields { left, operator, right } = ast.as_fields();
 
     let operator = operator?;
     let lhs = left?.into_syntax();
     let rhs = right?.into_syntax();
 
-    if operator.kind() != RSyntaxKind::EQUAL && operator.kind() != RSyntaxKind::ASSIGN_RIGHT {
+    let operator_to_check = match assignment_op {
+        RSyntaxKind::ASSIGN => RSyntaxKind::EQUAL,
+        RSyntaxKind::EQUAL => RSyntaxKind::ASSIGN,
+        _ => unreachable!(),
+    };
+
+    if operator.kind() != operator_to_check && operator.kind() != RSyntaxKind::ASSIGN_RIGHT {
         return Ok(None);
     };
 
@@ -57,29 +55,51 @@ pub fn assignment(ast: &RBinaryExpression) -> anyhow::Result<Option<Diagnostic>>
     // range is used in the LSP to highlight lints, but highlighting the entire
     // binary expression would be super annoying for long functions that are
     // assigned using `=`.
-    let range_to_report: TextRange;
-
-    let replacement = match operator.kind() {
+    let (range_to_report, msg, replacement) = match operator.kind() {
         RSyntaxKind::EQUAL => {
-            range_to_report = TextRange::new(
+            let range = TextRange::new(
                 lhs.text_trimmed_range().start(),
                 operator.text_trimmed_range().end(),
             );
-            format!("{} <- {}", lhs.text_trimmed(), rhs.text_trimmed())
+            let message = "Use `<-` for assignment.";
+            let fix = format!("{} <- {}", lhs.text_trimmed(), rhs.text_trimmed());
+            (range, message, fix)
+        }
+        RSyntaxKind::ASSIGN => {
+            let range = TextRange::new(
+                lhs.text_trimmed_range().start(),
+                operator.text_trimmed_range().end(),
+            );
+            let message = "Use `=` for assignment.";
+            let fix = format!("{} = {}", lhs.text_trimmed(), rhs.text_trimmed());
+            (range, message, fix)
         }
         RSyntaxKind::ASSIGN_RIGHT => {
-            range_to_report = TextRange::new(
+            let range = TextRange::new(
                 operator.text_trimmed_range().start(),
                 rhs.text_trimmed_range().end(),
             );
-            format!("{} <- {}", rhs.text_trimmed(), lhs.text_trimmed())
+            let (message, fix) = match assignment_op {
+                RSyntaxKind::ASSIGN => {
+                    let msg = "Use `<-` for assignment.";
+                    let replacement = format!("{} <- {}", rhs.text_trimmed(), lhs.text_trimmed());
+                    (msg, replacement)
+                }
+                RSyntaxKind::EQUAL => {
+                    let msg = "Use `=` for assignment.";
+                    let replacement = format!("{} = {}", rhs.text_trimmed(), lhs.text_trimmed());
+                    (msg, replacement)
+                }
+                _ => unreachable!(),
+            };
+            (range, message, fix)
         }
         _ => unreachable!(),
     };
 
     let range = ast.syntax().text_trimmed_range();
     let diagnostic = Diagnostic::new(
-        EqualAssignment,
+        ViolationData::new("assignment".to_string(), msg.to_string()),
         range_to_report,
         Fix {
             content: replacement,
