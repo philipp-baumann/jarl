@@ -78,12 +78,12 @@
 				},
 				"jarl.assignmentOperator": {
 					"default": "<-",
-					"markdownDescription": "Controls the preferred assignment operator and will report usage of the other one if the `assignment` linter is active.",
+					"markdownDescription": "Controls the preferred assignment operator and will report usage of the other one if the `assignment` linter is active. Changes take effect immediately.",
 					"enum": [
 						"<-",
 						"="
 					],
-					"scope": "application",
+					"scope": "window",
 					"type": "string"
 				},
 				"jarl.syncFileSettingsWithClient": {
