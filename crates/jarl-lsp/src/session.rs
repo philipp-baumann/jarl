@@ -11,12 +11,25 @@ use lsp_types::{
     WorkDoneProgressOptions,
 };
 use rustc_hash::FxHashMap;
+use serde::Deserialize;
 
 use std::path::PathBuf;
 
 use crate::LspResult;
 use crate::client::Client;
 use crate::document::{DocumentKey, DocumentVersion, PositionEncoding, TextDocument};
+
+/// Initialization options sent by the client
+#[derive(Debug, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct InitializationOptions {
+    /// Log level for the server
+    pub log_level: Option<String>,
+    /// Log levels for dependencies
+    pub dependency_log_levels: Option<String>,
+    /// Assignment operator preference: "<-" or "="
+    pub assignment_operator: Option<String>,
+}
 
 /// Main session state for the LSP server
 pub struct Session {
@@ -32,6 +45,8 @@ pub struct Session {
     workspace_roots: Vec<PathBuf>,
     /// Client for sending messages
     client: Client,
+    /// Assignment operator preference from initialization
+    assignment_operator: Option<String>,
 }
 
 /// Immutable snapshot of a document and its context
@@ -44,6 +59,8 @@ pub struct DocumentSnapshot {
     position_encoding: PositionEncoding,
     /// Client capabilities
     client_capabilities: ClientCapabilities,
+    /// Assignment operator preference
+    assignment_operator: Option<String>,
 }
 
 impl Session {
@@ -61,12 +78,37 @@ impl Session {
             shutdown_requested: false,
             workspace_roots,
             client,
+            assignment_operator: None,
         }
     }
 
     /// Initialize the session with client parameters
     #[allow(deprecated)]
     pub fn initialize(&mut self, params: InitializeParams) -> LspResult<InitializeResult> {
+        // Parse initialization options
+        tracing::debug!(
+            "Initialization params received: {:?}",
+            params.initialization_options
+        );
+        if let Some(init_options) = params.initialization_options {
+            match serde_json::from_value::<InitializationOptions>(init_options.clone()) {
+                Ok(options) => {
+                    tracing::info!("Successfully parsed initialization options: {:?}", options);
+                    tracing::info!(
+                        "Setting assignment_operator to: {:?}",
+                        options.assignment_operator
+                    );
+                    self.assignment_operator = options.assignment_operator.clone();
+                }
+                Err(e) => {
+                    tracing::warn!("Failed to parse initialization options: {:?}", e);
+                    tracing::warn!("Raw initialization_options: {:?}", init_options);
+                }
+            }
+        } else {
+            tracing::warn!("No initialization_options provided");
+        }
+
         // Update workspace roots if provided
         if let Some(workspace_folders) = params.workspace_folders {
             self.workspace_roots.clear();
@@ -186,7 +228,13 @@ impl Session {
             key,
             position_encoding: self.position_encoding,
             client_capabilities: self.client_capabilities.clone(),
+            assignment_operator: self.assignment_operator.clone(),
         })
+    }
+
+    /// Update the assignment operator preference
+    pub fn update_assignment_operator(&mut self, assignment_operator: Option<String>) {
+        self.assignment_operator = assignment_operator;
     }
 
     /// Get all open document URIs
@@ -240,18 +288,19 @@ impl Session {
 }
 
 impl DocumentSnapshot {
-    /// Create a new document snapshot
     pub fn new(
         document: TextDocument,
         key: DocumentKey,
         position_encoding: PositionEncoding,
         client_capabilities: ClientCapabilities,
+        assignment_operator: Option<String>,
     ) -> Self {
         Self {
             document,
             key,
             position_encoding,
             client_capabilities,
+            assignment_operator,
         }
     }
 
@@ -283,6 +332,11 @@ impl DocumentSnapshot {
     /// Get the position encoding
     pub fn position_encoding(&self) -> PositionEncoding {
         self.position_encoding
+    }
+
+    /// Get the assignment operator preference
+    pub fn assignment_operator(&self) -> Option<&String> {
+        self.assignment_operator.as_ref()
     }
 
     /// Get the client capabilities

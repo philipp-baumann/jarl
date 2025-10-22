@@ -38,9 +38,10 @@ pub fn lint_document(snapshot: &DocumentSnapshot) -> Result<Vec<Diagnostic>> {
     let content = snapshot.content();
     let file_path = snapshot.file_path();
     let encoding = snapshot.position_encoding();
+    let assignment_operator = snapshot.assignment_operator();
 
     // Run the actual linting
-    let jarl_diagnostics = run_jarl_linting(content, file_path.as_deref())?;
+    let jarl_diagnostics = run_jarl_linting(content, file_path.as_deref(), assignment_operator)?;
 
     // Convert to LSP diagnostics with fix information
     let mut lsp_diagnostics = Vec::new();
@@ -53,7 +54,11 @@ pub fn lint_document(snapshot: &DocumentSnapshot) -> Result<Vec<Diagnostic>> {
 }
 
 /// Run the Jarl linting engine on the given content
-fn run_jarl_linting(content: &str, file_path: Option<&Path>) -> Result<Vec<JarlDiagnostic>> {
+fn run_jarl_linting(
+    content: &str,
+    file_path: Option<&Path>,
+    assignment_operator: Option<&String>,
+) -> Result<Vec<JarlDiagnostic>> {
     let file_path = match file_path {
         Some(path) => path,
         None => {
@@ -99,7 +104,7 @@ fn run_jarl_linting(content: &str, file_path: Option<&Path>) -> Result<Vec<JarlD
         min_r_version: None,
         allow_dirty: false,
         allow_no_vcs: false,
-        assignment_op: None,
+        assignment_op: assignment_operator.cloned(),
     };
 
     let config = build_config(&check_config, &resolver, paths)?;
@@ -280,6 +285,7 @@ mod tests {
             key,
             PositionEncoding::UTF8,
             ClientCapabilities::default(),
+            None,
         )
     }
 

@@ -367,6 +367,15 @@ impl Server {
                 }
                 Ok(())
             }
+            types::notification::DidChangeConfiguration::METHOD => {
+                // Configuration changes require reloading the VS Code window
+                // because InitializationOptions are only sent during server startup.
+                // We log this for debugging but don't take action.
+                tracing::info!(
+                    "Configuration change detected. Restart the language server (reload VS Code window) for changes to take effect."
+                );
+                Ok(())
+            }
             _ => {
                 tracing::debug!("Unhandled notification: {}", notification.method);
                 Ok(())
@@ -579,6 +588,7 @@ mod tests {
             key,
             PositionEncoding::UTF8,
             lsp_types::ClientCapabilities::default(),
+            None,
         )
     }
 
@@ -1066,6 +1076,7 @@ mod tests {
             key,
             encoding,
             lsp_types::ClientCapabilities::default(),
+            None,
         )
     }
 }

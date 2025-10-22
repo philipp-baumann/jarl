@@ -105,7 +105,7 @@ export class Lsp {
 		const workspaceFolder = await getRootWorkspaceFolder();
 
 		const workspaceSettings = getWorkspaceSettings("jarl", workspaceFolder);
-		const initializationOptions = {};
+		const initializationOptions = getInitializationOptions("jarl");
 
 		const binaryPath = await resolveJarlBinaryPath(
 			workspaceSettings.executableStrategy,
@@ -127,6 +127,7 @@ export class Lsp {
 				{ language: "r", pattern: "**/*.{r,R}" },
 			],
 			outputChannel: this.channel,
+			initializationOptions: initializationOptions,
 		};
 
 		const client = new lc.LanguageClient(
