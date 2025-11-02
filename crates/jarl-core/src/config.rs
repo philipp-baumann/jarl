@@ -293,7 +293,7 @@ fn replace_group_rules(rules_passed_by_user: &Vec<&str>, all_rules: &RuleTable) 
 // individual rule names.
 fn get_invalid_rules(
     all_rule_names: &RuleTable,
-    rules_passed_by_user: &Vec<String>,
+    rules_passed_by_user: &[String],
 ) -> Option<Vec<String>> {
     let all_rules_set: HashSet<_> = all_rule_names.iter().map(|x| x.name.clone()).collect();
 
@@ -386,10 +386,10 @@ fn determine_minimum_r_version(
 
         if desc_path.exists() {
             let desc = fs::read_to_string(&desc_path)?;
-            if let Ok(versions) = Description::get_depend_r_version(&desc) {
-                if let Some(version_str) = versions.first() {
-                    return Ok(Some(parse_r_version(version_str.to_string())?));
-                }
+            if let Ok(versions) = Description::get_depend_r_version(&desc)
+                && let Some(version_str) = versions.first()
+            {
+                return Ok(Some(parse_r_version(version_str.to_string())?));
             }
         }
     }

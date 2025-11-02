@@ -40,15 +40,15 @@ impl Description {
 /// Extract version number from an R dependency string like "R (>= 4.3.0)"
 fn extract_version_from_dependency(dep: &str) -> Option<String> {
     // Look for version requirement in parentheses
-    if let Some(start) = dep.find('(') {
-        if let Some(end) = dep.find(')') {
-            let version_part = &dep[start + 1..end];
-            // Remove >= operator and extract just the version number
-            let version = version_part.replace(">=", "").trim().to_string();
+    if let Some(start) = dep.find('(')
+        && let Some(end) = dep.find(')')
+    {
+        let version_part = &dep[start + 1..end];
+        // Remove >= operator and extract just the version number
+        let version = version_part.replace(">=", "").trim().to_string();
 
-            if !version.is_empty() {
-                return Some(version);
-            }
+        if !version.is_empty() {
+            return Some(version);
         }
     }
 

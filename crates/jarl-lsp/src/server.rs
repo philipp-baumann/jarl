@@ -312,13 +312,13 @@ impl Server {
                 // Trigger linting for push diagnostics (real-time as you type)
                 let supports_pull_diagnostics = session.supports_pull_diagnostics();
 
-                if !supports_pull_diagnostics {
-                    if let Some(snapshot) = session.take_snapshot(params.text_document.uri) {
-                        task_sender.send(Task::LintDocument {
-                            snapshot: Box::new(snapshot),
-                            client: session.client().clone(),
-                        })?;
-                    }
+                if !supports_pull_diagnostics
+                    && let Some(snapshot) = session.take_snapshot(params.text_document.uri)
+                {
+                    task_sender.send(Task::LintDocument {
+                        snapshot: Box::new(snapshot),
+                        client: session.client().clone(),
+                    })?;
                 }
                 Ok(())
             }
@@ -357,13 +357,13 @@ impl Server {
 
                 let supports_pull_diagnostics = session.supports_pull_diagnostics();
 
-                if !supports_pull_diagnostics {
-                    if let Some(snapshot) = session.take_snapshot(params.text_document.uri) {
-                        task_sender.send(Task::LintDocument {
-                            snapshot: Box::new(snapshot),
-                            client: session.client().clone(),
-                        })?;
-                    }
+                if !supports_pull_diagnostics
+                    && let Some(snapshot) = session.take_snapshot(params.text_document.uri)
+                {
+                    task_sender.send(Task::LintDocument {
+                        snapshot: Box::new(snapshot),
+                        client: session.client().clone(),
+                    })?;
                 }
                 Ok(())
             }
@@ -377,34 +377,23 @@ impl Server {
 
                 if let Some(settings_obj) = params.settings.as_object() {
                     // Try to get from nested jarl object
-                    if let Some(jarl_settings) = settings_obj.get("jarl") {
-                        if let Some(jarl_obj) = jarl_settings.as_object() {
-                            if let Some(assignment_op_value) = jarl_obj.get("assignmentOperator") {
-                                if let Some(assignment_op) = assignment_op_value.as_str() {
-                                    tracing::info!(
-                                        "Updating assignment operator to: {}",
-                                        assignment_op
-                                    );
-                                    session.update_assignment_operator(Some(
-                                        assignment_op.to_string(),
-                                    ));
-                                    updated = true;
-                                }
-                            }
-                        }
+                    if let Some(jarl_settings) = settings_obj.get("jarl")
+                        && let Some(jarl_obj) = jarl_settings.as_object()
+                        && let Some(assignment_op_value) = jarl_obj.get("assignmentOperator")
+                        && let Some(assignment_op) = assignment_op_value.as_str()
+                    {
+                        tracing::info!("Updating assignment operator to: {}", assignment_op);
+                        session.update_assignment_operator(Some(assignment_op.to_string()));
+                        updated = true;
                     }
                     // Also try direct access in case VS Code sends it at the top level
-                    if !updated {
-                        if let Some(assignment_op_value) = settings_obj.get("assignmentOperator") {
-                            if let Some(assignment_op) = assignment_op_value.as_str() {
-                                tracing::info!(
-                                    "Updating assignment operator to: {}",
-                                    assignment_op
-                                );
-                                session.update_assignment_operator(Some(assignment_op.to_string()));
-                                updated = true;
-                            }
-                        }
+                    if !updated
+                        && let Some(assignment_op_value) = settings_obj.get("assignmentOperator")
+                        && let Some(assignment_op) = assignment_op_value.as_str()
+                    {
+                        tracing::info!("Updating assignment operator to: {}", assignment_op);
+                        session.update_assignment_operator(Some(assignment_op.to_string()));
+                        updated = true;
                     }
                 }
 
@@ -412,13 +401,13 @@ impl Server {
                 if updated {
                     tracing::info!("Retriggering diagnostics for all open documents");
                     for uri in session.open_documents().collect::<Vec<_>>() {
-                        if let Some(snapshot) = session.take_snapshot(uri.clone()) {
-                            if let Err(e) = task_sender.send(Task::LintDocument {
+                        if let Some(snapshot) = session.take_snapshot(uri.clone())
+                            && let Err(e) = task_sender.send(Task::LintDocument {
                                 snapshot: Box::new(snapshot),
                                 client: session.client().clone(),
-                            }) {
-                                tracing::error!("Failed to queue lint task: {}", e);
-                            }
+                            })
+                        {
+                            tracing::error!("Failed to queue lint task: {}", e);
                         }
                     }
                 } else {
@@ -552,10 +541,10 @@ impl Server {
 
         // Filter diagnostics that intersect with the requested range
         for diagnostic in diagnostics {
-            if ranges_overlap(&diagnostic.range, &params.range) {
-                if let Some(action) = Self::diagnostic_to_code_action(&diagnostic, snapshot) {
-                    actions.push(types::CodeActionOrCommand::CodeAction(action));
-                }
+            if ranges_overlap(&diagnostic.range, &params.range)
+                && let Some(action) = Self::diagnostic_to_code_action(&diagnostic, snapshot)
+            {
+                actions.push(types::CodeActionOrCommand::CodeAction(action));
             }
         }
 
