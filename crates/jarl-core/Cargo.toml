@@ -8,6 +8,7 @@ license-file.workspace = true
 repository.workspace = true
 readme.workspace = true
 
+
 [lib]
 name = "jarl_core"
 path = "src/lib.rs"
