@@ -8,10 +8,6 @@ license-file.workspace = true
 repository.workspace = true
 readme.workspace = true
 
-[[bin]]
-name = "jarl-lsp"
-path = "src/bin/jarl-lsp.rs"
-
 [dependencies]
 jarl-core = { path = "../jarl-core" }
 
