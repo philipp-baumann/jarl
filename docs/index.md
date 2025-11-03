@@ -12,7 +12,7 @@ toc: false
 <br>
 <div style="text-align: center !important">
   <a href = "https://jarl.etiennebacher.com/" target = "_blank"><img src="https://img.shields.io/static/v1?label=Docs&message=Visit&color=blue"></a>
-  [![Build status](https://github.com/etiennebacher/jarl/workflows/cargo-test/badge.svg)](https://github.com/etiennebacher/jarl/actions)
+  <a href = "https://github.com/etiennebacher/jarl/actions" target = "_blank"><img src="https://github.com/etiennebacher/jarl/workflows/cargo-test/badge.svg"></a>
 </div>
 
 <br>
