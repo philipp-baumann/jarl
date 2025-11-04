@@ -2,8 +2,6 @@
 title: Configuring Jarl
 ---
 
-# Configuring Jarl
-
 ## With the command line
 
 Jarl comes with various options available directly from the command line.

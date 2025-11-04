@@ -1,8 +1,6 @@
 ---
-title: Contributing
+title: Contributing to Jarl
 ---
-
-# Contributing to Jarl
 
 ## Tools
 

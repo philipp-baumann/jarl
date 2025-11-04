@@ -30,8 +30,6 @@ website:
       href: https://github.com/etiennebacher/jarl
       aria-label: GitHub
     left:
-    - text: Home
-      href: index.md
     - text: Using Jarl
       href: using-jarl.md
     - text: Configuration

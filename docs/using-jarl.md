@@ -2,8 +2,6 @@
 title: Using Jarl
 ---
 
-# Using Jarl
-
 ## Linting and fixing
 
 `jarl check` is the command required to diagnoze one or several files.
