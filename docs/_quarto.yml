@@ -39,7 +39,7 @@ website:
     - text: Editors
       href: editors.md
     - text: Integrations
-      href: integration.md
+      href: integrations.md
     - text: Contributing
       href: contributing.md
   sidebar:
