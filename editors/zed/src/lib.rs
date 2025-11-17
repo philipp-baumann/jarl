@@ -42,7 +42,7 @@ impl JarlExtension {
 
         // We pass through user specified binary arguments no matter what method is
         // used to get the binary. If no arguments are supplied we eventually fall back to
-        // just `language-server` as the sole argument.
+        // just `server` as the sole argument.
         let binary_args = binary_settings
             .as_ref()
             .and_then(|binary_settings| binary_settings.arguments.clone());
@@ -189,9 +189,7 @@ impl zed::Extension for JarlExtension {
         let jarl_binary = self.language_server_binary(language_server_id, worktree)?;
         Ok(zed::Command {
             command: jarl_binary.path,
-            args: jarl_binary
-                .args
-                .unwrap_or_else(|| vec!["language-server".into()]),
+            args: jarl_binary.args.unwrap_or_else(|| vec!["server".into()]),
             env: vec![],
         })
     }

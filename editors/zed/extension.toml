@@ -1,7 +1,7 @@
 id = "jarl"
 name = "Jarl"
 description = "Jarl extension for Zed"
-version = "0.1.0"
+version = "0.1.1"
 schema_version = 1
 authors = ["Etienne Bacher"]
 repository = "https://github.com/etiennebacher/jarl"
