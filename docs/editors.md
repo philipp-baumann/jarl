@@ -37,3 +37,35 @@ It is recommended to use [`jarl.toml`](config.md) if more configuration is neede
 ::: {.callout-tip}
 The [Tombi extension](https://github.com/tombi-toml/tombi) is useful to have suggestions and autocompletion when editing `jarl.toml`.
 :::
+
+
+## Zed
+
+Jarl is available in the list of Zed extensions.
+After installing it, you will need to update `settings.json`, in particular the field `languages`:
+
+```json
+"languages": {
+  "Python": {
+    [...]
+  },
+  "R": {
+    "language_servers": ["jarl"]
+  }
+}
+```
+
+`language_servers` accepts multiple values, so you may have `"language_servers": ["jarl", "air"]` for example.
+
+As in Positron / VS Code, it is possible to pass a few options, such as `assignmentOperator`.
+This has to be specified in the `lsp` field:
+
+```json
+"lsp": {
+  "jarl": {
+    "initialization_options": {
+      "assignmentOperator": "="
+    }
+  }
+}
+```
