@@ -15,6 +15,7 @@
 - Added support for `seq` and `seq2` rules (#187).
 - Added support for several rules related to `testthat`. Those rules are disabled by default and can be enabled by combining `select` or `extend-select` with the rule name or the `TESTTHAT` group rule name. Those rules are:
   - `expect_length` (#211)
+  - `expect_named` (#212)
   - `expect_not` (#204)
   - `expect_null` (#202)
   - `expect_true_false` (#191)
