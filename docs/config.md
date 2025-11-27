@@ -86,7 +86,7 @@ This file looks like this:
 ```toml
 [lint]
 select = []
-exend-select = []
+extend-select = []
 ignore = []
 exclude = []
 default-exclude = true
