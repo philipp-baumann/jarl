@@ -1,5 +1,11 @@
 # Changelog
 
+## Development
+
+### Other
+
+- Important performance improvement when using `--fix`, in particular in projects with many R files (#217).
+
 ## 0.2.0
 
 ### Breaking changes
