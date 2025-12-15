@@ -1,5 +1,6 @@
 use crate::diagnostic::*;
 use crate::utils::{get_arg_by_position, node_contains_comments};
+use crate::utils_ast::AstNodeExt;
 use air_r_syntax::*;
 use biome_rowan::AstNode;
 
@@ -31,11 +32,7 @@ use biome_rowan::AstNode;
 /// ```
 pub fn outer_negation(ast: &RCall) -> anyhow::Result<Option<Diagnostic>> {
     // We don't want to report calls like `!any(x)`, just `any(x)`
-    if let Some(parent) = ast.syntax().parent()
-        && parent.kind() == RSyntaxKind::R_UNARY_EXPRESSION
-        && let Some(prev_sibling) = ast.syntax().prev_sibling()
-        && prev_sibling.kind() == RSyntaxKind::BANG
-    {
+    if ast.parent_is_bang_unary() {
         return Ok(None);
     }
 

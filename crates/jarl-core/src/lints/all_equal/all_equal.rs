@@ -1,5 +1,6 @@
 use crate::diagnostic::*;
 use crate::utils::{get_function_name, get_nested_functions_content, node_contains_comments};
+use crate::utils_ast::AstNodeExt;
 use air_r_syntax::*;
 use biome_rowan::AstNode;
 
@@ -79,52 +80,39 @@ pub fn all_equal(ast: &RCall) -> anyhow::Result<Option<Diagnostic>> {
         return Ok(None);
     }
 
-    let mut msg = "".to_string();
-    let mut fix_content = "".to_string();
+    if !ast.parent_is_if_condition()
+        && !ast.parent_is_while_condition()
+        && !ast.parent_is_bang_unary()
+    {
+        return Ok(None);
+    }
+
+    let msg = "`all.equal()` can return a string instead of FALSE.".to_string();
     let mut range = ast.syntax().text_trimmed_range();
 
-    // The `condition` part of an `RIfStatement` is always the 3rd node
-    // (index 2):
-    // IF_KW - L_PAREN - [condition] - R_PAREN - [consequence]
-    let in_if_condition = ast.syntax().parent().unwrap().kind() == RSyntaxKind::R_IF_STATEMENT
-        && ast.syntax().index() == 2;
-    // The `consequence` part of an `RWhileStatement` is always the 3rd node
-    // (index 2):
-    // WHILE_KW - L_PAREN - [condition] - R_PAREN - [consequence]
-    let in_while_condition = ast.syntax().parent().unwrap().kind()
-        == RSyntaxKind::R_WHILE_STATEMENT
-        && ast.syntax().index() == 2;
-    if in_if_condition || in_while_condition {
-        msg = "`all.equal()` can return a string instead of FALSE.".to_string();
-        fix_content = format!("isTRUE({})", ast.to_trimmed_text());
-    }
-
-    if let Some(prev) = ast.syntax().prev_sibling_or_token()
-        && prev.kind() == RSyntaxKind::BANG
-    {
-        msg = "`all.equal()` can return a string instead of FALSE.".to_string();
-        fix_content = format!("!isTRUE({})", ast.to_trimmed_text());
-        range = TextRange::new(prev.text_trimmed_range().start(), range.end())
+    let fix_content = if ast.parent_is_bang_unary() {
+        if let Some(prev) = ast.syntax().prev_sibling_or_token() {
+            range = TextRange::new(prev.text_trimmed_range().start(), range.end())
+        }
+        format!("!isTRUE({})", ast.to_trimmed_text())
+    } else {
+        format!("isTRUE({})", ast.to_trimmed_text())
     };
 
-    if !msg.is_empty() {
-        let diagnostic = Diagnostic::new(
-            ViolationData::new(
-                "all_equal".to_string(),
-                msg,
-                Some("Wrap `all.equal()` in `isTRUE()`, or replace it by `identical()` if no tolerance is required.".to_string()),
-            ),
-            range,
-            Fix {
-                content: fix_content,
-                start: range.start().into(),
-                end: range.end().into(),
-                to_skip: node_contains_comments(ast.syntax()),
-            },
-        );
+    let diagnostic = Diagnostic::new(
+        ViolationData::new(
+            "all_equal".to_string(),
+            msg,
+            Some("Wrap `all.equal()` in `isTRUE()`, or replace it by `identical()` if no tolerance is required.".to_string()),
+        ),
+        range,
+        Fix {
+            content: fix_content,
+            start: range.start().into(),
+            end: range.end().into(),
+            to_skip: node_contains_comments(ast.syntax()),
+        },
+    );
 
-        return Ok(Some(diagnostic));
-    }
-
-    Ok(None)
+    Ok(Some(diagnostic))
 }

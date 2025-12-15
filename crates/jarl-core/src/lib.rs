@@ -25,6 +25,7 @@ pub mod rule_table;
 pub mod settings;
 pub mod suppression;
 pub mod toml;
+pub mod utils_ast;
 pub mod vcs;
 
 #[cfg(test)]

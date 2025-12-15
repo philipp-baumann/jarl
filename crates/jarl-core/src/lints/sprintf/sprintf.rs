@@ -2,6 +2,7 @@ use crate::diagnostic::*;
 use crate::utils::{
     get_arg_by_name_then_position, get_function_name, get_unnamed_args, node_contains_comments,
 };
+use crate::utils_ast::AstNodeExt;
 use air_r_syntax::*;
 use biome_rowan::AstNode;
 
@@ -57,9 +58,7 @@ pub fn sprintf(ast: &RCall) -> anyhow::Result<Option<Diagnostic>> {
     }
 
     // Don't know how to handle pipes for now.
-    if let Some(prev_sibling) = ast.syntax().prev_sibling_or_token()
-        && prev_sibling.kind() == RSyntaxKind::PIPE
-    {
+    if ast.has_previous_pipe() {
         return Ok(None);
     }
 
