@@ -17,14 +17,15 @@
 - `--output-format json` now contains two fields `diagnostics` and `errors` (#219).
 - Better support for namespaced function calls, both when reporting violations
   and when fixing them (#221).
-- Added support for `sprintf` rule (#224).
-- Added support for `string_boundary` rule (#225).
-- Added support for `expect_type` rule (#226).
-- Added support for `fixed_regex` rule (#227).
-- Added support for `expect_s3_class` rule (#235).
-- Added support for `vector_logic` rule (#238).
 - The `class_equals` rule now also reports cases like `identical(class(x), "foo")`
   and `identical("foo", class(x))` (#234).
+- New rules:
+  - `expect_s3_class` (#235)
+  - `expect_type` (#226)
+  - `fixed_regex` (#227)
+  - `sprintf` (#224)
+  - `string_boundary` (#225)
+  - `vector_logic` (#238)
 
 ### Fixes
 
