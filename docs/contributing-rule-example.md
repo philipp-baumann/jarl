@@ -393,7 +393,10 @@ We now need to document this change:
 * update `CHANGELOG.md`
 * update `docs/rules.md`
 
-If you have installed `just` as [recommended](https://jarl.etiennebacher.com/contributing#tools), you can now run `just document` to update the website and `just lint` to check that the code has no lints and is properly formatted.
+If you have installed `just` as [recommended](https://jarl.etiennebacher.com/contributing#tools), you can now run `just document` to update the website.
+
+Finally, run `just lint` to ensure that `clippy` (the Rust linter) doesn't report any issue and that the code is properly formatted.
+You can also run `just lint-fix` to apply `clippy`'s automatic fixes if there are any.
 
 
 ## Proposing your changes

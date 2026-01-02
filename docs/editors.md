@@ -125,7 +125,7 @@ vim.lsp.config('jarl', {})
 vim.lsp.enable 'jarl'
 ```
 
-This enables the code-actions and diagnostics (somewhat - see below note).
+This enables the code-actions and diagnostics.
 
 ![](img/nvim_diagnostic.png){fig-alt="R script with multiple errors showing in-line indicating a rule violation."}
 
