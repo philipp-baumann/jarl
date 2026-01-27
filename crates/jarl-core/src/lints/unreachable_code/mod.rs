@@ -216,7 +216,7 @@ foo <- function() {
         6 | |     x <- 1
         7 | |     "b"
         8 | |   }
-          | |___- This code is in a branch that can never be executed due to a constant condition.
+          | |___- This code is in a branch that can never be executed.
           |
         Found 1 error.
         "#);
@@ -243,7 +243,7 @@ foo <- function() {
         4 | |     x <- 1
         5 | |     "a"
         6 | |   } else {
-          | |___- This code is in a branch that can never be executed due to a constant condition.
+          | |___- This code is in a branch that can never be executed.
           |
         Found 1 error.
         "#);
@@ -273,7 +273,7 @@ foo <- function(bar) {
         ... |
         7 | |     }
         8 | |   } else {
-          | |___- This code is in a branch that can never be executed due to a constant condition.
+          | |___- This code is in a branch that can never be executed.
           |
         Found 1 error.
         ");
